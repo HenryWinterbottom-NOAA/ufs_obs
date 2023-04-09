@@ -1,0 +1,5 @@
+webpath: https://www.nhc.noaa.gov/archive/recon/2019/REPNT2
+
+vdm_file_frmt: REPNT2-KNHC.%Y%m%d%H%M.txt
+
+#cycle: 20190801000000

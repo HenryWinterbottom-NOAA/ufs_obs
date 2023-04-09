@@ -104,6 +104,7 @@ class VDMCollect:
         "outb_mxflwnd_info": "O. ",
         "out_fltmp_pres": "P. ",
         "in_fltmp_pres": "Q. ",
+        "url": "url_path: ",
     }
 
     def __init__(self: dataclass, yaml_obj: object):
@@ -116,7 +117,6 @@ class VDMCollect:
         """
 
         # Define the base-class attributes.
-        self.yaml_obj = yaml_obj
         self.logger = Logger()
         self.yaml_obj = yaml_obj
 
@@ -196,8 +196,9 @@ class VDMCollect:
 
     @privatemethod
     def vdm_getstr(self: dataclass, vdms_list: List, vdm_str: str) -> Generator:
-        """Defintion
-        ---------
+        """
+        Description
+        -----------
 
         This method reads a Python list of VDMs and returns a Python
         list of items containing the VDM string specified upon entry
@@ -254,8 +255,8 @@ class VDMCollect:
 
         vdm_info_obj: object
 
-            A Python object containing Python generator objects for
-            the respective VDM attributes to be formatted.
+            A Python object containing Python lists for the respective
+            VDM attributes to be formatted.
 
         """
 
@@ -270,7 +271,8 @@ class VDMCollect:
             )
 
             vdm_info_obj = parser_interface.object_setattr(
-                object_in=vdm_info_obj, key=vdm_attr, value=vdm_attrs_list
+                object_in=vdm_info_obj, key=vdm_attr, value=list(
+                    vdm_attrs_list)
             )
 
         return vdm_info_obj
