@@ -36,6 +36,7 @@ from confs.yaml_interface import YAML
 from exceptions import VDMError
 from vdm.collect import VDMCollect
 from vdm.format import VDMFormat
+from vdm.ncwrite import VDMNCWrite
 from utils.logger_interface import Logger
 
 # ----
@@ -68,6 +69,7 @@ class VDM:
 
         self.vdm_collect = VDMCollect(yaml_obj=self.yaml_obj)
         self.vdm_format = VDMFormat(yaml_obj=self.yaml_obj)
+        self.vdm_ncwrite = VDMNCWrite(yaml_obj=self.yaml_obj)
 
     def run(self: dataclass) -> None:
         """
@@ -77,4 +79,5 @@ class VDM:
         """
 
         vdm_info_obj = self.vdm_collect.collect()
-        self.vdm_format.format(vdm_info_obj=vdm_info_obj)
+        tcevents_obj = self.vdm_format.format(vdm_info_obj=vdm_info_obj)
+        self.vdm_ncwrite.ncwrite(tcevents_obj=tcevents_obj)

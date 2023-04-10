@@ -47,18 +47,9 @@ from tools import datetime_interface
 
 from utils import timestamp_interface
 
+from utils.constants_interface import hPa2Pa, kts2mps
+
 from tools import parser_interface
-
-# ----
-
-
-# MOVE TO parser_interface.py; add option to either return NoneType or
-# the exception handle.
-def catch(func, handle=lambda e: e, *args, **kwargs):
-    try:
-        return func(*args, **kwargs)
-    except Exception as e:
-        return None  # handle(e)
 
 # ----
 
@@ -122,10 +113,16 @@ class VDMFormat:
             tcevent_obj.dates = self.get_dates(
                 vdm_info_obj=vdm_info_obj, idx_list=idx_list)
 
-            # Collect the geographic VDM fix locations for the
-            # respective VDMs.
+            # Collect the attributes from the respective VDMs.
             (tcevent_obj.fix_lats, tcevent_obj.fix_lons) = self.get_fixes(
                 vdm_info_obj=vdm_info_obj, idx_list=idx_list)
+            tcevent_obj.mslp = self.get_mslp(
+                vdm_info_obj=vdm_info_obj, idx_list=idx_list)
+
+            tcevents_obj = parser_interface.object_setattr(
+                object_in=tcevents_obj, key=tcevent, value=tcevent_obj)
+
+        return tcevents_obj
 
     @privatemethod
     def get_dates(self: dataclass, vdm_info_obj: object, idx_list: List) -> List:
@@ -161,6 +158,9 @@ class VDMFormat:
 
         # Collect the list of VDM URL paths and determine the
         # timestamps for each.
+        msg = "Collecting and formatting vortex data message timestamps."
+        self.logger.info(msg=msg)
+
         url_list = [os.path.basename(url) for url in
                     self.get_list_item(vdm_info_attr_list=vdm_info_obj.url,
                                        idx_list=idx_list)]
@@ -177,6 +177,9 @@ class VDMFormat:
         """
         Description
         -----------
+
+        This method collects the estimated fix location(s) from the
+        respective VMD(s).
 
         Parameters
         ----------
@@ -210,6 +213,9 @@ class VDMFormat:
 
         # Collect the list of VDM geographical fix locations and
         # format accordingly.
+        msg = "Collecting and defining the vortex data message fix locations."
+        self.logger.info(msg=msg)
+
         fix_list = self.get_list_item(vdm_info_attr_list=vdm_info_obj.fix,
                                       idx_list=idx_list)
 
@@ -217,13 +223,62 @@ class VDMFormat:
 
         for fix_str in fix_list:
             fix_items_list = fix_str.split()
-            geolocs_list = [value for value in ([catch(lambda: float(fix_item))
-                            for fix_item in fix_items_list]) if value is not None]
+
+            geolocs_list = [value for value in (
+                [parser_interface.handler(lambda: float(fix_item), return_none=True)
+                 for fix_item in fix_items_list]) if value is not None]
 
             lats_list.append(geolocs_list[0])
             lons_list.append(-1.0*geolocs_list[1])
 
         return (lats_list, lons_list)
+
+    @privatemethod
+    def get_mslp(self: dataclass, vdm_info_obj: object,
+                 idx_list: List) -> List:
+        """
+        Description
+        -----------
+
+        This method collects the minimum sea-level pressure
+        estimated/extrapolated values from the respective VDM(s).
+
+        Parameters
+        ----------
+
+        vdm_info_obj: object
+
+            A Python object containing the VDM information/attributes.
+
+        idx_list: List
+
+            A Python list containing the list index values
+            corresponding to valid VDM for a specified TC event; see
+            base-class method `format`.
+
+        Returns
+        -------
+
+        mslp_list: List
+
+            A Python list containing the minimum sea-level pressure
+            values collected from the respective VDM(s); units are
+            Pascals.
+
+        """
+
+        # Collect the list of VDM minimum sea-level pressure
+        # estimates/extrapolations and format accordingly.
+        msg = "Collecting and defining the vortex data message intensity estimates."
+        self.logger.info(msg=msg)
+
+        mslp_est_list = self.get_list_item(vdm_info_attr_list=vdm_info_obj.mslp,
+                                           idx_list=idx_list)
+
+        mslp_list = [float(mslp_est.split()[2]) *
+                     hPa2Pa for mslp_est in mslp_est_list]
+
+        return mslp_list
 
     @privatemethod
     def get_list_item(self: dataclass, vdm_info_attr_list: List,
@@ -258,6 +313,8 @@ class VDMFormat:
 
         """
 
+        # Collect and return the respective list slice as defined by
+        # the list of index values `idx_list`.
         vdm_attr_list = [vdm_info_attr_list[idx] for idx in idx_list]
 
         return vdm_attr_list
