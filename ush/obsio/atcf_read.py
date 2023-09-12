@@ -1,7 +1,3 @@
-# File: ush/obsio/atcf_read.py
-# Author: Henry R. Winterbottom
-# Date: 11 September 2023
-
 """
 Module
 ------
@@ -67,12 +63,6 @@ History
 
 # ----
 
-__author__ = "Henry R. Winterbottom"
-__maintainer__ = "Henry R. Winterbottom"
-__email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
 import os
 from types import SimpleNamespace
 from typing import Dict, List
@@ -89,7 +79,7 @@ from exceptions import ATCFReadError
 
 # ----
 
-# Define all available functions.
+# Define all available module properties.
 __all__ = ["read_tcvfile"]
 
 # ----
@@ -185,12 +175,15 @@ def __scalegeo__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     (lat_scale, lon_scale) = [1.0 / 10.0 for idx in range(2)]
     if "S" in tcvrec_obj.lat:
         lat_scale = -1.0 / 10.0
-    tcvrec_obj.lat = units.Quantity(lat_scale * int(tcvrec_obj.lat[:-1]), "degrees")
+    tcvrec_obj.lat = units.Quantity(
+        lat_scale * int(tcvrec_obj.lat[:-1]), "degrees")
     if "E" in tcvrec_obj.lon:
         lon_scale = -1.0 / 10.0
-    tcvrec_obj.lon = units.Quantity(lon_scale * int(tcvrec_obj.lon[:-1]), "degrees")
+    tcvrec_obj.lon = units.Quantity(
+        lon_scale * int(tcvrec_obj.lon[:-1]), "degrees")
     tcvrec_obj.stormdir = units.Quantity(tcvrec_obj.stormdir, "degrees")
-    tcvrec_obj.stormspd = units.Quantity(tcvrec_obj.stormspd * kts2mps, units="mps")
+    tcvrec_obj.stormspd = units.Quantity(
+        tcvrec_obj.stormspd * kts2mps, units="mps")
 
     return tcvrec_obj
 

@@ -2,7 +2,7 @@
 ![Linux](https://img.shields.io/badge/Linux-ubuntu%7Ccentos-lightgrey)
 ![Python Version](https://img.shields.io/badge/Python-3.5|3.6|3.7-blue)
 [![Code style: black](https://img.shields.io/badge/Code%20Style-black-purple.svg)](https://github.com/psf/black)
-[![Documentation Status](https://readthedocs.org/projects/ufs-tcdiags/badge/?version=latest)](https://ufs-obs.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/ufs-obs/badge/?version=latest)](https://ufs-obs.readthedocs.io/en/latest/?badge=latest)
 
 [![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_obs/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_obs/actions/workflows/pycodestyle.yaml)
 
@@ -11,7 +11,8 @@
 This repository contains tools for reading and writing specified
 format observation-type files.
 
-- **Author:** Henry R. Winterbottom
+- **Authors:** [Henry R. Winterbottom](mailto:henry.winterbottom@noaa.gov)
+- **Maintainers:** Henry R. Winterbottom
 - **Version:** 0.0.1
 - **License:** LGPL v2.1
 - **Copyright**: Henry R. Winterbottom
