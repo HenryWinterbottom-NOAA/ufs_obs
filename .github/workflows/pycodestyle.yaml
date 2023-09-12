@@ -32,10 +32,10 @@ jobs:
 
           $(command -v git) clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
              
-          cd "${GITHUB_WORKSPACE}"/ufs_obs/sorc
+          cd "${GITHUB_WORKSPACE}"/sorc
 
-          export PYTHONPPATH="${GITHUB_WORKSPACE}"/ufs_pyutils:"${GITHUB_WORKSPACE}"/ufs_obs/sorc
+          export PYTHONPPATH="${GITHUB_WORKSPACE}"/ufs_pyutils:"${GITHUB_WORKSPACE}"/sorc
 
-          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/ufs_obs/.pycodestyle ufs_obs
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle ufs_obs
 
-          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/ufs_obs/.pycodestyle ufs_obs/obsio
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle ufs_obs/obsio
