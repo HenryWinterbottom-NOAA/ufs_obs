@@ -1,0 +1,109 @@
+---
+tcv_center:
+  required: True
+  idx: 0
+  type: str
+tcid:
+  required: True
+  idx: 1
+  type: str
+event_name:
+  idx: 2
+  type: str
+  default: NONAME
+time_ymd:
+  required: True
+  idx: 3
+  type: int
+time_hm:
+  required: True
+  idx: 4
+  type: int
+lat:
+  required: True
+  idx: 5
+  type: str
+lon:
+  required: True
+  idx: 6
+  type: str
+stormdir:
+  idx: 7
+  type: int
+  default: -99
+stormspd:
+  idx: 8
+  type: int
+  default: -99
+mslp:
+  required: True
+  idx: 9
+  type: int
+poci:
+  idx: 10
+  type: int
+  default: -999
+roci:
+  idx: 11
+  type: int
+  default: -999
+vmax:
+  required: True
+  idx: 12
+  type: int
+rmw:
+  idx: 13
+  type: int
+  default: -99
+ne34:
+  idx: 14
+  type: int
+  default: -999
+se34:
+  idx: 15
+  type: int
+  default: -999
+sw34:
+  idx: 16
+  type: int
+  default: -999
+nw34:
+  idx: 17
+  type: int
+  default: -999
+ne50:
+  idx: 18
+  type: int
+  default: -999
+se50:
+  idx: 19
+  type: int
+  default: -999
+sw50:
+  idx: 20
+  type: int
+  default: -999
+sw50:
+  idx: 21
+  type: int
+  default: -999
+ne64:
+  idx: 22
+  type: int
+  default: -999
+se64:
+  idx: 23
+  type: int
+  default: -999
+sw64:
+  idx: 24
+  type: int
+  default: -999
+nw64:
+  idx: 25
+  type: int
+  default: -999
+stormdepth:
+  idx: 26
+  type: str
+  default: X
