@@ -36,6 +36,6 @@ jobs:
 
           export PYTHONPPATH="${GITHUB_WORKSPACE}"/ufs_pyutils:"${GITHUB_WORKSPACE}"/sorc
 
-          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle ufs_obs
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle sorc/ufs_obs
 
-          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle ufs_obs/obsio
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle sorc/ufs_obs/obsio
