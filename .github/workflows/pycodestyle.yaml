@@ -28,8 +28,14 @@ jobs:
           path: ufs_obs
       - name: Run pycodestyle application.
         run: >
-          cd ${GITHUB_WORKSPACE}/ufs_obs
+          cd "${GITHUB_WORKSPACE}"
 
-          $(command -v pycodestyle) -v --config ${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle ufs_obs
+          $(command -v git) clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
+             
+          cd "${GITHUB_WORKSPACE}"/ufs_obs/sorc
 
-          $(command -v pycodestyle) -v --config ${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle ufs_obs/obsio
+          export PYTHONPPATH="${GITHUB_WORKSPACE}"/ufs_pyutils:"${GITHUB_WORKSPACE}"/ufs_obs/sorc
+
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/ufs_obs/.pycodestyle ufs_obs
+
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/ufs_obs/.pycodestyle ufs_obs/obsio
