@@ -115,7 +115,7 @@ class ATCF(Observation):
 
         return tcvobj
 
-    def write(self: Observation):
+    def write(self: Observation) -> None:
         """
         # TODO
 
