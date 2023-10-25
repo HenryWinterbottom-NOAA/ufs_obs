@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Run Python coding standards check.
     steps:
-      - name: Build and install Python dependencies
+      - name: Build and install Python dependencies.
         run: >
           $(command -v wget) --no-check-certificate
           https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
@@ -28,8 +28,14 @@ jobs:
           path: ufs_obs
       - name: Run pycodestyle application.
         run: >
-          cd ${GITHUB_WORKSPACE}/ufs_obs
+          cd "${GITHUB_WORKSPACE}"
 
-          $(command -v pycodestyle) -v --config ${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle ufs_obs
+          $(command -v git) clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
+             
+          cd "${GITHUB_WORKSPACE}"/ufs_obs/sorc
 
-          $(command -v pycodestyle) -v --config ${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle ufs_obs/obsio
+          export PYTHONPPATH="${GITHUB_WORKSPACE}"/ufs_pyutils:"${GITHUB_WORKSPACE}"/sorc
+
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle sorc/ufs_obs
+
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}"/.pycodestyle sorc/ufs_obs/obsio

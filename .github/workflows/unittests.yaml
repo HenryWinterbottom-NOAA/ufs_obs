@@ -1,0 +1,38 @@
+---
+name: Unit Tests
+on:
+  pull_request:
+    types:
+      - opened
+  release:
+    types:
+      - published
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Run the ufs_obs unit-tests.
+    steps:
+      - name: Build and install Python dependencies.
+        run: >
+          $(command -v wget) --no-check-certificate
+          https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
+
+          $(command -v sh) Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p miniconda
+
+          $(command -v python) -m pip install --upgrade pip
+
+          $(command -v pip) install ufs-pyutils
+
+          $(command -v pip) install pybufrkit
+      - name: Checkout ufs_obs.
+        uses: actions/checkout@v2
+        with:
+          path: ufs_obs
+      - name: Run unit-tests.
+        run: |
+          export PYTHONPATH="${GITHUB_WORKSPACE}/ufs_obs/sorc/ufs_obs"
+          
+          cd ${GITHUB_WORKSPACE}/ufs_obs/sorc
+
+          $(command -v pytest)
+ 

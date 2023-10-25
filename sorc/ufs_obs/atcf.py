@@ -44,9 +44,9 @@ History
 
 from types import SimpleNamespace
 
-from exceptions import ATCFReadError
-from observation import Observation
-from obsio.atcf_read import read_tcvfile
+from ufs_obs.exceptions import ATCFReadError
+from ufs_obs.observation import Observation
+from ufs_obs.obsio.atcf_read import read_tcvfile
 
 # ----
 
