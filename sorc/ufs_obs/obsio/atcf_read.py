@@ -75,7 +75,7 @@ from utils.constants_interface import hPa2Pa, kn2m, kts2mps
 from utils.logger_interface import Logger
 from utils.schema_interface import build_schema, validate_schema
 
-from exceptions import ATCFReadError
+from ufs_obs.exceptions import ATCFReadError
 
 # ----
 
@@ -119,9 +119,9 @@ def __get_tcvrec__(tcvrec_list: List) -> Dict:
     # Collect the ATCF attributes for the respective TC event.
     msg = "Formatting ATCF record."
     logger.info(msg=msg)
-    atcf_schema = YAML().read_yaml(
-        yaml_file=os.path.join(os.getcwd(), "schema", "atcf_read.schema.yaml")
-    )
+    yaml_file = os.path.join(os.path.dirname(
+        os.path.dirname(__file__)), "schema", "atcf_read.schema.yaml")
+    atcf_schema = YAML().read_yaml(yaml_file=yaml_file)
     tcvrec_dict = {}
     for (key, _) in atcf_schema.items():
         try:
@@ -326,10 +326,7 @@ def read_tcvfile(filepath: str) -> SimpleNamespace:
                 tcvrec_obj = __scaleintns__(tcvrec_obj=tcvrec_obj)
                 tcvrec_obj = __scalesize__(tcvrec_obj=tcvrec_obj)
                 tcvobj = parser_interface.object_setattr(
-                    object_in=tcvobj,
-                    key=f"TC{idx}",
-                    value=__get_tcvrec__(tcvrec_list=tcv.split()),
-                )
+                    object_in=tcvobj, key=f"TC{idx}", value=tcvrec_obj)
     except Exception as errmsg:
         msg = (
             f"Parsing ATCF filepath {filepath} failed with error {errmsg}. "
