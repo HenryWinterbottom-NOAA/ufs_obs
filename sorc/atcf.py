@@ -44,7 +44,7 @@ History
 
 from types import SimpleNamespace
 
-from exceptions import ATCFReadError
+from exceptions import ATCFError
 from observation import Observation
 from obsio.atcf_read import read_tcvfile
 
@@ -110,12 +110,12 @@ class ATCF(Observation):
         super().read()
         if atcf_filepath is None:
             msg = "The ATCF-formatted file path cannot be NoneType. Aborting!!!"
-            raise ATCFReadError(msg=msg)
+            raise ATCFError(msg=msg)
         tcvobj = read_tcvfile(filepath=atcf_filepath)
 
         return tcvobj
 
-    def write(self: Observation) -> None:
+    def write(self: Observation, tcvobj: SimpleNamespace) -> None:
         """
         # TODO
 

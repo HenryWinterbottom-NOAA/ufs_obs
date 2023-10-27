@@ -95,7 +95,7 @@ class Observation(ABC):
         """
 
         # Define the base-class attributes.
-        self.logger = Logger()
+        self.logger = Logger(caller_name=f"{__name__}.{self.__class__.__name__}")
         self.obs_type = obs_type
         self.obs_obj = parser_interface.object_define()
 

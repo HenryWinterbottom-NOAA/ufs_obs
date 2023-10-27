@@ -75,7 +75,7 @@ from utils.constants_interface import hPa2Pa, kn2m, kts2mps
 from utils.logger_interface import Logger
 from utils.schema_interface import build_schema, validate_schema
 
-from exceptions import ATCFReadError
+from exceptions import ATCFError
 
 # ----
 
@@ -335,6 +335,6 @@ def read_tcvfile(filepath: str) -> SimpleNamespace:
             f"Parsing ATCF filepath {filepath} failed with error {errmsg}. "
             "Aborting!!!"
         )
-        raise ATCFReadError(msg=msg) from errmsg
+        raise ATCFError(msg=msg) from errmsg
 
     return tcvobj
