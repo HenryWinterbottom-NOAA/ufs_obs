@@ -73,7 +73,7 @@ master_doc = "index"
 
 # API attributes.
 autoapi_dirs = [
-    os.path.join(os.path.abspath("."), "sorc")
+    "../../sorc",
 ]
 autoapi_type = "python"
 autoapi_ignore = []
