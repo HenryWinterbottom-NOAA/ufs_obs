@@ -36,7 +36,7 @@ installation attributes are provided in the table below.
 | Dependency Package | <div align="left">Installation Instructions</div> | 
 | :-------------: | :-------------: |
 | <div align="left">[`pybufrkit`](https://github.com/ywangd/pybufrkit)</div> | <div align="left">`pip install pybufrkit`</div> |
-| <div align="left">[`ufs_pyutils`](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils)</div> | <div align="left">`pip install ufs_utils`</div> |
+| <div align="left">[`ufs_pyutils`](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils)</div> | <div align="left">`git+https://www.github.com/HenryWinterbottom-NOAA/ufs_pyutils.git`</div> |
 
 </div>
 
@@ -55,18 +55,17 @@ For additional information using `pip` and `requirements.pip` type files, see [h
 
 # Docker Containers
 
-A Docker container containing the latest supported image can be
-obtained as follows.
+Docker containers containing the `ufs_obs` dependencies can be
+collected as follows.
 
 ~~~shell
 user@host:$ /path/to/docker pull ghrc.io/henrywinterbottom-noaa/ubuntu20.04.ufs_obs:latest
 ~~~
 
-The Docker container may then be used as follows.
+To execute within the Docker container, do as follows.
 
 ~~~shell
-user@host:$ /path/to/docker container run -it ghrc.io/henrywinterbottom-noaa/ubuntu20.04.ufs_obs:latest
-user@host:$ cd /home/ufs_obs
+user@host:$ /path/to/docker run -v /localhost/path/to/ufs_obs:/ufs_obs -v /localhost/path/to/work:/work -it ghcr.io/henrywinterbottom-noaa/ubuntu20.04.ufs_obs:latest
 ~~~
 
 # Forking
