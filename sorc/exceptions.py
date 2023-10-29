@@ -17,6 +17,11 @@ Classes
         This is the base-class for exceptions encountered within the
         ush/atcf module; it is a sub-class of Error.
 
+    ObservationError(msg)
+
+        This is the base-class for exceptions encountered within the
+        ush/observation module; it is a sub-class of Error.
+
 Requirements
 ------------
 
@@ -43,6 +48,7 @@ from utils.error_interface import Error
 # Define all available module properties.
 __all__ = [
     "ATCFError",
+    "ObservationError",
 ]
 
 # ----
@@ -58,3 +64,15 @@ class ATCFError(Error):
 
     """
 
+# ----
+
+
+class ObservationError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ush/observation module; it is a sub-class of Error.
+
+    """
