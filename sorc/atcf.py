@@ -260,7 +260,7 @@ class ATCF(Observation):
                     )
                     with open(vfile_jinja, "r", encoding="utf-8") as vfile:
                         tcv = vfile.read()
-                    msg = f"Writing ATCF record {tcv}."
+                    msg = f"Writing the following ATCF record: {tcv}"
                     self.logger.info(msg=msg)
                     atcf_file.write(f"{tcv}")
                     os.unlink(vfile_jinja)
