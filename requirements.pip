@@ -1,2 +1,2 @@
 pybufrkit
-ufs_pyutils
+git+https://www.github.com/HenryWinterbottom-NOAA/ufs_pyutils@develop
