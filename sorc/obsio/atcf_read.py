@@ -63,19 +63,17 @@ History
 
 # ----
 
-import os
 from types import SimpleNamespace
 from typing import Dict, List
 
 import numpy
 from confs.yaml_interface import YAML
+from exceptions import ATCFError
 from metpy.units import units
 from tools import parser_interface
 from utils.constants_interface import hPa2Pa, kn2m, kts2mps
 from utils.logger_interface import Logger
 from utils.schema_interface import build_schema, validate_schema
-
-from exceptions import ATCFError
 
 # ----
 
@@ -120,10 +118,10 @@ def __get_tcvrec__(tcvrec_list: List) -> Dict:
     msg = "Formatting ATCF record."
     logger.info(msg=msg)
     atcf_schema = YAML().read_yaml(
-        yaml_file=os.path.join(os.getcwd(), "schema", "atcf_read.schema.yaml")
+        yaml_file=parser_interface.enviro_get("ATCF_READ_SCHEMA")
     )
     tcvrec_dict = {}
-    for (key, _) in atcf_schema.items():
+    for key, _ in atcf_schema.items():
         try:
             idx = atcf_schema[key]["idx"]
             tcvrec_dict[key] = tcvrec_list[idx]
@@ -317,7 +315,7 @@ def read_tcvfile(filepath: str) -> SimpleNamespace:
     # proceed accordingly.
     try:
         tcvobj = parser_interface.object_define()
-        for (idx, tcv) in enumerate(tcvdata.split("\n")):
+        for idx, tcv in enumerate(tcvdata.split("\n")):
             if tcv.strip():
                 msg = f"Parsing TC-vitals record {tcv}."
                 logger.info(msg)
