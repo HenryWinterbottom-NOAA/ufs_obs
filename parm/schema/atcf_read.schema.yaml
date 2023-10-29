@@ -3,107 +3,134 @@ tcv_center:
   required: True
   idx: 0
   type: str
+  format: "%-4s"
 tcid:
   required: True
   idx: 1
   type: str
+  format: "%-3s"
 event_name:
   idx: 2
   type: str
   default: NONAME
+  format: "%-9s"
 time_ymd:
   required: True
   idx: 3
   type: int
+  format: "%08d"
 time_hm:
   required: True
   idx: 4
   type: int
+  format: "%04d"
 lat:
   required: True
   idx: 5
   type: str
+  format: "%s"
 lon:
   required: True
   idx: 6
   type: str
+  format: "%s"
 stormdir:
   idx: 7
   type: int
   default: -99
+  format: "%03d"
 stormspd:
   idx: 8
   type: int
   default: -99
+  format: "%03d"
 mslp:
   required: True
   idx: 9
   type: int
+  format: "%04d"
 poci:
   idx: 10
   type: int
   default: -999
+  format: "%04d"
 roci:
   idx: 11
   type: int
   default: -999
+  format: "%04d"
 vmax:
   required: True
   idx: 12
   type: int
+  format: "%02d"
 rmw:
   idx: 13
   type: int
   default: -99
+  format: "%03d"
 ne34:
   idx: 14
   type: int
   default: -999
+  format: "%04d"
 se34:
   idx: 15
   type: int
   default: -999
+  format: "%04d"
 sw34:
   idx: 16
   type: int
   default: -999
+  format: "%04d"
 nw34:
   idx: 17
   type: int
   default: -999
+  format: "%04d"
 ne50:
   idx: 18
   type: int
   default: -999
+  format: "%04d"
 se50:
   idx: 19
   type: int
   default: -999
+  format: "%04d"
 sw50:
   idx: 20
   type: int
   default: -999
+  format: "%04d"
 sw50:
   idx: 21
   type: int
   default: -999
+  format: "%04d"
 ne64:
   idx: 22
   type: int
   default: -999
+  format: "%04d"
 se64:
   idx: 23
   type: int
   default: -999
+  format: "%04d"
 sw64:
   idx: 24
   type: int
   default: -999
+  format: "%04d"
 nw64:
   idx: 25
   type: int
   default: -999
+  format: "%04d"
 stormdepth:
   idx: 26
   type: str
   default: X
+  format: "%s"
