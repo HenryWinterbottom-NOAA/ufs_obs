@@ -28,8 +28,8 @@ jobs:
           path: ufs_obs
       - name: Run pycodestyle application.
         run: >
-          cd ${GITHUB_WORKSPACE}/ufs_obs
+          cd "${GITHUB_WORKSPACE}/ufs_obs"
 
-          $(command -v pycodestyle) -v --config ${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle ufs_obs
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle" sorc
 
-          $(command -v pycodestyle) -v --config ${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle ufs_obs/obsio
+          $(command -v pycodestyle) -v --config "${GITHUB_WORKSPACE}/ufs_obs/.pycodestyle" sorc/obsio
