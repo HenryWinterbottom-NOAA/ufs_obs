@@ -1,0 +1,50 @@
+---
+name: Software Feature Request
+description: >
+  Request a feature and/or enhancement for the respective software
+  package.
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please search the open issues
+        [here](https://github.com/HenryWinterbottom-NOAA/ufs_tools/issues)
+        before creating new one.
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation.
+      description: |
+        Please explain the benefits of the feature and/or enhancement
+        being requested.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution.
+      description: |
+        Please provide a enumerated list of steps to resolve the new
+        feature and/or enhancement being requested.
+    validations:
+      required: true
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context.
+      description: |
+        Please include any additional information and/or context
+        relevant to the feature request.
+    validations:
+      required: false
+  - type: textarea
+    id: related_issues
+    attributes:
+      label: Related issues.
+      description: |
+        Please link any related issues.
+    validations:
+      required: false
+

@@ -1,0 +1,53 @@
+---
+name: Software Bug Report
+description: >
+  Raise an issue for something that is either a software bug or a
+  feature that is broken.
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please search the open issues
+        [here](https://github.com/HenryWinterbottom-NOAA/ufs_tools/issues)
+        before creating new one.
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Please indicate any/all platforms that are impacted.
+      multiple: true
+      options:
+        - RDHPCS Hera
+        - RDHPCS Orion
+        - RDHPCS Jet
+        - NOAA CSP AWS
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior.
+      description: |
+        Please described the expected outcome if the respective issue
+        and/or bug were not present.
+    validations:
+      required: true
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior.
+      description: >
+        Please described the behavior to be encountered by the current
+        issue and/or bug.
+    validations:
+      required: true
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: Additional information.
+      description: |
+        Please provide any supplementary information to aid the developer(s).
+    validations:
+      required: false
