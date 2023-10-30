@@ -38,11 +38,11 @@ Functions
         This function scales the size metric values to their
         corresponding MKS units.
 
-    read_atcf(filepath, write_table=False)
+    read_atcf(filepath)
 
         This function reads a TC-vitals formatted file and returns a
-        Python object containing the TC-vitals attributes for all
-        records within the filepath.
+        Python SimpleNamespace object containing the TC-vitals
+        attributes for all records within the filepath.
 
 Requirements
 ------------
@@ -286,8 +286,8 @@ def read_tcvfile(filepath: str) -> SimpleNamespace:
     -----------
 
     This function reads a TC-vitals formatted file and returns a
-    Python object containing the TC-vitals attributes for all records
-    within the filepath.
+    Python SimpleNamespace object containing the TC-vitals attributes
+    for all records within the filepath.
 
     Parameters
     ----------
