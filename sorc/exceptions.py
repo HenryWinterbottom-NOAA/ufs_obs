@@ -17,6 +17,11 @@ Classes
         This is the base-class for exceptions encountered within the
         ush/atcf module; it is a sub-class of Error.
 
+    CIMSSADTError(msg)
+
+        This is the base-class for exceptions encountered within the
+        ush/cimss_adt module; it is a sub-class of Error.
+
     ObservationError(msg)
 
         This is the base-class for exceptions encountered within the
@@ -48,6 +53,7 @@ from utils.error_interface import Error
 # Define all available module properties.
 __all__ = [
     "ATCFError",
+    "CIMSSADTError",
     "ObservationError",
 ]
 
@@ -63,6 +69,20 @@ class ATCFError(Error):
     ush/atcf module; it is a sub-class of Error.
 
     """
+
+# ----
+
+
+class CIMSSADTError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ush/cimss_adt module; it is a sub-class of Error.
+
+    """
+
 
 # ----
 
