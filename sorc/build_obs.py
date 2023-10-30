@@ -107,7 +107,7 @@ def build_obs(func: Callable) -> Callable:
 
         """
 
-        # Validate the observation values vai the specified
+        # Validate the observation values via the specified
         # observation-type schema.
         (schema_path, obs_dict) = func(self, *args, **kwargs)
         cls_schema = build_schema(
