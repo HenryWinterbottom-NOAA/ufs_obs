@@ -1,0 +1,24 @@
+input_type:
+  help: |
+    The input observation type.
+  longname: input_type
+  required: true
+  type: str
+input_file:
+  help: |
+    The input observation type file path.
+  longname: input_file
+  required: true
+  type: str
+output_type:
+  help: >
+    The output observation type.
+  longname: output_type
+  required: true
+  type: str
+output_file:
+  help: |
+    The output observation type file path.
+  longname: output_file
+  required: true
+  type: str
