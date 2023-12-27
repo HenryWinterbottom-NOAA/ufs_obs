@@ -103,7 +103,7 @@ class ATCF(Observation):
         Parameters
         ----------
 
-        tcvobj: SimpleNamespace
+        tcvobj: ``SimpleNamespace``
 
             A Python SimpleNamespace object containing the attributes
             for the respective ATCF record.
@@ -111,7 +111,7 @@ class ATCF(Observation):
         Return
         ------
 
-        obs_dict: Dict
+        obs_dict: ``Dict``
 
             A Python dictionary containing the ATCF observations.
 
@@ -135,14 +135,14 @@ class ATCF(Observation):
         Parameters
         ----------
 
-        obs_dict: Dict
+        obs_dict: ``Dict``
 
             A Python dictionary containing the ATCF observations.
 
         Returns
         -------
 
-        tcv_dict: Dict
+        tcv_dict: ``Dict``
 
             A Python dictionary containing the ATCF-formatted record.
 
@@ -171,7 +171,7 @@ class ATCF(Observation):
         Keywords
         --------
 
-        atcf_filepath: str, optional
+        atcf_filepath: ``str``, optional
 
             A Python string specifying the path to the ATCF-formatted
             file containing the respective ATCF records.
@@ -179,7 +179,7 @@ class ATCF(Observation):
         Returns
         -------
 
-        tcvobj: SimpleNamespace
+        tcvobj: ``SimpleNamespace``
 
             A Python SimpleNamespace object containing the attributes
             for each ATCF record.
@@ -214,12 +214,12 @@ class ATCF(Observation):
         Parameters
         ----------
 
-        tcvobj: SimpleNamespace
+        tcvobj: ``SimpleNamespace``
 
             A Python SimpleNamespace object containing the attributes
             for each ATCF record.
 
-        atcf_filepath: str
+        atcf_filepath: ``str``
 
             A Python string specifying the path to the ATCF-formatted
             file to contain the respective ATCF records.

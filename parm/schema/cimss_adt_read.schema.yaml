@@ -1,0 +1,27 @@
+---
+time_yyyymmdd:
+  required: True
+  type: str
+  units: null
+time_hhmmss:
+  required: True
+  type: int
+  units: null
+lat:
+  required: True
+  type: float
+  units: degrees
+lon:
+  required: True
+  type: float
+  units: degrees
+mslp:
+  required: True
+  type: float
+  units: pascal
+  scale: hPa2Pa
+vmax:
+  required: True
+  type: float
+  units: mps
+  scale: kts2mps

@@ -62,7 +62,7 @@ Functions
         within the relevant lines of the respective input file
         `filepath`.
 
-    read_cimssadt(filepath, scene_exclude = None, fix_exclude = None)
+    read_cimssadt_history(filepath, scene_exclude = None, fix_exclude = None)
 
         This function reads a CIMSS ADT history formatted file and
         returns a Python SimpleNamespace object containing the
@@ -103,7 +103,7 @@ from utils.timestamp_interface import GLOBAL
 # ----
 
 # Define all available module properties.
-__all__ = ["read_cimssadt"]
+__all__ = ["read_cimssadt_history"]
 
 # ----
 
@@ -123,7 +123,7 @@ def filter_adt(func: Callable) -> Callable:
     Parameters
     ----------
 
-    func: Callable
+    func: ``Callable``
 
         A Python Callable object containing the function to be
         wrapped.
@@ -131,14 +131,14 @@ def filter_adt(func: Callable) -> Callable:
     Returns
     -------
 
-    wrapped_function: Callable
+    wrapped_function: ``Callable``
 
         A Python Callable object containing the wrapped function.
 
     """
 
     @functools.wraps(func)
-    def wrapped_function(*args: Tuple, **kwargs: Dict) -> Tuple[Callable, List]:
+    def wrapped_function(*args: Tuple, **kwargs: Dict) -> List:
         """
         Description
         -----------
@@ -149,12 +149,12 @@ def filter_adt(func: Callable) -> Callable:
         Other Parameters
         ----------------
 
-        args: Tuple
+        args: ``Tuple``
 
             A Python tuple containing additional arguments passed to
             the constructor.
 
-        kwargs: Dict
+        kwargs: ``Dict``
 
             A Python dictionary containing additional key and value
             pairs to be passed to the constructor.
@@ -177,7 +177,8 @@ def filter_adt(func: Callable) -> Callable:
                 if not any(ex in item for ex in exclude.rsplit())
             ]
         except AttributeError:
-            outlist = [item for item in inlist if not any(ex in item for ex in exclude)]
+            outlist = [item for item in inlist if not any(
+                ex in item for ex in exclude)]
 
         return outlist
 
@@ -198,7 +199,7 @@ def __adt_geoloc__(adtobs: str) -> Tuple[float, float]:
     Parameters
     ----------
 
-    adtobs: str
+    adtobs: ``str``
 
         A Python string containing the respective ADT observation to
         be parsed.
@@ -206,12 +207,12 @@ def __adt_geoloc__(adtobs: str) -> Tuple[float, float]:
     Returns
     -------
 
-    adt_lat: float
+    adt_lat: ``float``
 
         A Python float value defining the ADT observation latitude
         coordinate location.
 
-    adt_lon: float
+    adt_lon: ``float``
 
         A Python float value defining the ADT observation longitude
         coordinate location.
@@ -251,7 +252,7 @@ def __adt_intns__(adtobs: str) -> Tuple[float, float]:
     Parameters
     ----------
 
-    adtobs: str
+    adtobs: ``str``
 
         A Python string containing the respective ADT observation to
         be parsed.
@@ -259,12 +260,12 @@ def __adt_intns__(adtobs: str) -> Tuple[float, float]:
     Returns
     -------
 
-    adt_mslp: float
+    adt_mslp: ``float``
 
         A Python float value defining the ADT observation minimum
         sea-level pressure value; units are Pascal.
 
-    adt_vmax: float
+    adt_vmax: ``float``
 
         A Python float value defining the ADT observation maximum wind
         speed intensity value; units are meters per second.
@@ -301,7 +302,7 @@ def __adt_time__(adtobs: str) -> str:
     Parameters
     ----------
 
-    adtobs: str
+    adtobs: ``str``
 
         A Python string containing the respective ADT observation to
         be parsed.
@@ -309,7 +310,7 @@ def __adt_time__(adtobs: str) -> str:
     Returns
     -------
 
-    adt_time: str
+    adt_time: ``str``
 
         A Python string defining the ADT observation timestamp; format
         is %Y%m%d%H%M%S assuming the POSIX convention.
@@ -340,14 +341,14 @@ def __build_adt__(adtobs_list: List) -> SimpleNamespace:
     Parameters
     ----------
 
-    adtobs_list: List
+    adtobs_list: ``List``
 
         A Python list of ADT observations.
 
     Returns
     -------
 
-    adtobs_obj: SimpleNamespace
+    adtobs_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the relevant CIMSS
         ADT observations.
@@ -362,8 +363,10 @@ def __build_adt__(adtobs_list: List) -> SimpleNamespace:
     for idx, adtobs in enumerate(adtobs_list):
         adtobs_dict = {}
         adtobs_dict["timestamp"] = __adt_time__(adtobs=adtobs)
-        (adtobs_dict["lat"], adtobs_dict["lon"]) = __adt_geoloc__(adtobs=adtobs)
-        (adtobs_dict["mslp"], adtobs_dict["vmax"]) = __adt_intns__(adtobs=adtobs)
+        (adtobs_dict["lat"], adtobs_dict["lon"]
+         ) = __adt_geoloc__(adtobs=adtobs)
+        (adtobs_dict["mslp"], adtobs_dict["vmax"]
+         ) = __adt_intns__(adtobs=adtobs)
         adtobs_obj = parser_interface.object_setattr(
             object_in=adtobs_obj, key=f"ADT{idx:04}", value=adtobs_dict
         )
@@ -385,7 +388,7 @@ def __build_table__(adtobs_obj: SimpleNamespace) -> None:
     Parameters
     ----------
 
-    adtobs_obj: SimpleNamespace
+    adtobs_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the relevant CIMSS
         ADT observations.
@@ -404,7 +407,8 @@ def __build_table__(adtobs_obj: SimpleNamespace) -> None:
         "Wind Speed (meter per second)",
     ]
     for adtobs in vars(adtobs_obj):
-        adtobs_dict = parser_interface.object_getattr(object_in=adtobs_obj, key=adtobs)
+        adtobs_dict = parser_interface.object_getattr(
+            object_in=adtobs_obj, key=adtobs)
         row = [
             adtobs,
             adtobs_dict["timestamp"],
@@ -434,11 +438,11 @@ def __filter_fix__(adtobs_list: List, fix_exclude: List) -> List:
     Parameters
     ----------
 
-    adtobs_list: List
+    adtobs_list: ``List``
 
         A Python list of ADT observations.
 
-    scene_exclude: List
+    scene_exclude: ``List``
 
         A Python list of CIMSS ADT `FIX MTHD` attributes/types to be
         filtered from the ADT observations list specified upon entry.
@@ -446,7 +450,7 @@ def __filter_fix__(adtobs_list: List, fix_exclude: List) -> List:
     Returns
     -------
 
-    adtobs_list: List
+    adtobs_list: ``List``
 
         A Python list of filtered ADT observations.
 
@@ -477,11 +481,11 @@ def __filter_scene__(adtobs_list: List, scene_exclude: List) -> List:
     Parameters
     ----------
 
-    adtobs_list: List
+    adtobs_list: ``List``
 
         A Python list of ADT observations.
 
-    scene_exclude: List
+    scene_exclude: ``List``
 
         A Python list of CIMSS ADT `SCENE TYPE` attributes/types to be
         filtered from the ADT observations list specified upon entry.
@@ -489,7 +493,7 @@ def __filter_scene__(adtobs_list: List, scene_exclude: List) -> List:
     Returns
     -------
 
-    adtobs_list: List
+    adtobs_list: ``List``
 
         A Python list of filtered ADT observations.
 
@@ -521,7 +525,7 @@ def __get_adtobs__(filepath: str) -> List:
     Parameters
     ----------
 
-    filepath: str
+    filepath: ``str``
 
         A Python string specifying the file path for the CIMSS-ADT
         formatted file.
@@ -529,7 +533,7 @@ def __get_adtobs__(filepath: str) -> List:
     Returns
     -------
 
-    adtobs_list: List
+    adtobs_list: ``List``
 
         A Python list of ADT observations.
 
@@ -564,7 +568,7 @@ def __get_adtobs__(filepath: str) -> List:
 # ----
 
 
-def read_cimssadt(
+def read_cimssadt_history(
     filepath: str, scene_exclude: List = None, fix_exclude: List = None
 ) -> SimpleNamespace:
     """
@@ -578,7 +582,7 @@ def read_cimssadt(
     Parameters
     ----------
 
-    filepath: str
+    filepath: ``str``
 
         A Python string specifying the file path for the CIMSS ADT
         history formatted file.
@@ -586,12 +590,12 @@ def read_cimssadt(
     Keywords
     --------
 
-    scene_exclude: List, optional
+    scene_exclude: ``List``, optional
 
         A Python list containing `SCENE TYPE` observation attributes
         to be excluded from the ADT observation collection.
 
-    fix_exclude: List, optional
+    fix_exclude: ``List``, optional
 
         A Python list containing `FIX MTHD` observation attributes to
         be excluded from the ADT observation collection.
@@ -599,7 +603,7 @@ def read_cimssadt(
     Returns
     -------
 
-    adtobs_obj: SimpleNamespace
+    adtobs_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the relevant CIMSS
         ADT observation attributes.
@@ -608,8 +612,10 @@ def read_cimssadt(
 
     # Collect the relevant CIMSS ADT observation attributes.
     adtobs_list = __get_adtobs__(filepath=filepath)
-    adtobs_list = __filter_scene__(adtobs_list=adtobs_list, scene_exclude=scene_exclude)
-    adtobs_list = __filter_fix__(adtobs_list=adtobs_list, fix_exclude=fix_exclude)
+    adtobs_list = __filter_scene__(
+        adtobs_list=adtobs_list, scene_exclude=scene_exclude)
+    adtobs_list = __filter_fix__(
+        adtobs_list=adtobs_list, fix_exclude=fix_exclude)
     adtobs_obj = __build_adt__(adtobs_list=adtobs_list)
     __build_table__(adtobs_obj=adtobs_obj)
 

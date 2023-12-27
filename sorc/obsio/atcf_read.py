@@ -99,7 +99,7 @@ def __get_tcvrec__(tcvrec_list: List) -> Dict:
     Parameters
     ----------
 
-    tcvrec_list: List
+    tcvrec_list: ``List``
 
         A Python list containing the attributes for the respective TC
         event.
@@ -107,7 +107,7 @@ def __get_tcvrec__(tcvrec_list: List) -> Dict:
     Returns
     -------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the ATCF attributes
         for the respective TC event.
@@ -154,7 +154,7 @@ def __scalegeo__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     Parameters
     ----------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the ATCF attributes
         for the respective TC event.
@@ -162,7 +162,7 @@ def __scalegeo__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     Returns
     -------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object updated to contain the
         geographical location coordinates.
@@ -201,7 +201,7 @@ def __scaleintns__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     Parameters
     ----------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the ATCF attributes
         for the respective TC event.
@@ -209,7 +209,7 @@ def __scaleintns__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     Returns
     -------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object updated to contain the
         intensity attribute values.
@@ -237,7 +237,7 @@ def __scalesize__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     Parameters
     ----------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the ATCF attributes
         for the respective TC event.
@@ -245,7 +245,7 @@ def __scalesize__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     Returns
     -------
 
-    tcvrec_obj: SimpleNamespace
+    tcvrec_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the scaled TC size
         attributes (if necessary).
@@ -292,7 +292,7 @@ def read_tcvfile(filepath: str) -> SimpleNamespace:
     Parameters
     ----------
 
-    filepath: str
+    filepath: ``str``
 
         A Python string specifying the file path for the TC-vitals
         formatted file.
@@ -300,7 +300,7 @@ def read_tcvfile(filepath: str) -> SimpleNamespace:
     Returns
     -------
 
-    tcvobj: SimpleNamespace
+    tcvobj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the attributes for
         each TC record within the file path specified upon entry.
