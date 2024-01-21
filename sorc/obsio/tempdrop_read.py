@@ -21,6 +21,7 @@ from metpy.units import units
 from utils.timestamp_interface import GLOBAL, GENERAL
 from build_obs import build_obs
 from diags.grids.bearing_geoloc import bearing_geoloc
+from diags.grids.haversine import haversine
 
 from obsio.sonde.sondelib import drop, close_hsa
 #from obsio.sonde.sonde import sonde_decode
@@ -70,6 +71,7 @@ class TEMPDROP(Observation):
         self.cls_schema = build_schema(schema_def_dict=YAML().read_yaml(yaml_file=schema_path)
                                        )
         self.infostrs_list = ["rel", "spg", "spl"]
+        self.hsa_timestamp_frmt = "%y%m%d. %H%M"
 
     @staticmethod
     def interp(varin: numpy.array, zarr: numpy.array, interp_type: str = "linear",
@@ -133,7 +135,15 @@ class TEMPDROP(Observation):
         return varout
 
     @staticmethod
-    def fallrate(avgp: numpy.array, avgt: numpy.array, psfc: float) -> numpy.array:
+    def fallrate(tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
+        """
+
+        """
+
+        
+    
+    @staticmethod
+    def fallrate2(avgp: numpy.array, avgt: numpy.array, psfc: float) -> numpy.array:
         """
 
         """
@@ -141,7 +151,12 @@ class TEMPDROP(Observation):
         flrtarr = numpy.zeros(len(avgp+1))
         for idx in range(len(avgp)):
             flrtarr[idx] = gsndfall2(pr=avgp[idx], te=avgt[idx], bad=True, sfcp=psfc,
-                                     mbps=True)/100.0
+                                     mbps=False)
+            print(avgp[idx], avgt[idx], psfc, flrtarr[idx])
+
+        #print(flrtarr)
+        #print(sum(flrtarr)/60.0)
+        quit()
 
         return flrtarr
 
@@ -177,6 +192,9 @@ class TEMPDROP(Observation):
                 out_frmttyp=GENERAL, offset_seconds=dtime)
             timestamp_list.append(ptime)
 
+        print(timestamp_list)
+        quit()
+
         return timestamp_list
 
     @privatemethod
@@ -204,14 +222,43 @@ class TEMPDROP(Observation):
     @staticmethod
     def normalize(tempdrop_obj: SimpleNamespace, xlat_list: List, xlon_list: List) -> SimpleNamespace:
         """
+        Description
+        -----------
+
+        This method normalizes the advection quantities for the
+        geographical location profile for the respective sonde
+        observations.
+
+        Parameters
+        ----------
+
+        xlat_list: ``List``
+
+            A Python list of latitude coordinate values collected from
+            the respective sonde observations.
+
+        xlon_list: ``List``
+
+            A Python list of longitude coordinate values collected
+            from the respective sonde observations.
+
+        Returns
+        -------
+
+        tempdrop_obj: ``SimpleNamespace``
+
+            A Python SimpleNamespace object updated to contain the
+            normalized latitude and longitude coordinate values for
+            the respective sonde observation.
 
         """
-        
+
+        # Normalize and correct the advected sonde observation
+        # geographical locations.
         norma_xlat = min(tempdrop_obj.locate.rel[0], tempdrop_obj.locate.spg[0])
         normb_xlat = max(tempdrop_obj.locate.rel[0], tempdrop_obj.locate.spg[0])
         norma_xlon = min(tempdrop_obj.locate.rel[1], tempdrop_obj.locate.spg[1])
         normb_xlon = max(tempdrop_obj.locate.rel[1], tempdrop_obj.locate.spg[1])
-
         tempdrop_obj.interp.lat = [norma_xlat + (xlat_list[idx] - min(xlat_list))*(normb_xlat - norma_xlat)/
                                    (max(xlat_list) - min(xlat_list)) for idx in range(len(xlat_list))]
         tempdrop_obj.interp.lon = [norma_xlon + (xlon_list[idx] - min(xlon_list))*(normb_xlon - norma_xlon)/
@@ -224,58 +271,60 @@ class TEMPDROP(Observation):
         """
 
         """
-
-        format_string = "{:2d} {:7.1f} {:4d} {:7.3f} {:7.3f} {:7.1f} {:7.1f} {:7.1f} {:8.1f} {:6.1f} {:6.1f} {}"
-
-        print(tempdrop_obj.interp)
-        quit()
         
-        for msg in tempdrop_obj.interp:
-            print(msg.split())
+        format_str = "{:2d} {:7.1f} {:4d} {:7.3f} {:7.3f} {:7.1f} {:7.1f} {:7.1f} {:8.1f} {:6.1f} {:6.1f} {}\n"
+        with open("test.hsa", "w") as out: # TODO: Could make this a virtual file.
+            for idx in range(len(tempdrop_obj.interp.pres)):
+                out.write(f"{format_str}".format(
+                    1, tempdrop_obj.interp.ymd[idx], tempdrop_obj.interp.hhmm[idx],
+                    tempdrop_obj.interp.lat[idx], # TODO: Need interpolated time.
+                    tempdrop_obj.interp.lon[idx], tempdrop_obj.interp.pres[idx],
+                    tempdrop_obj.interp.temp[idx], tempdrop_obj.interp.rh[idx],
+                    tempdrop_obj.interp.hgt[idx], tempdrop_obj.interp.uwnd[idx],
+                    tempdrop_obj.interp.vwnd[idx], tempdrop_obj.interp.flag[idx])
+                )
+
         
-        #print(tempdrop_obj.decode)
+
         
     @privatemethod
     def drift(self: Observation, tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
         """
+        Description
+        -----------
+
+        This method computes the corrected geographical locations for
+        the respective sonde observation relative to the sonde drift.
+
+        Parameters
+        ----------
+
+        tempdrop_obj: ``SimpleNamespace``
+
+            A Python SimpleNamespace object containing the TEMPDROP
+            observation(s) attributes.
+
+        Returns
+        -------
+
+        tempdrop_obj: ``SimpleNamespace``
+
+            A Python SimpleNamespace object containing the TEMPDROP
+            observations drift corrected geographical locations.
+
         """
 
+        # Correct the respective sonde observation locations for the
+        # respective sonde observation.
         tempdrop_obj = self.correct(tempdrop_obj=tempdrop_obj)
         tempdrop_obj.interp.heading = \
-            (numpy.degrees(numpy.arctan2(tempdrop_obj.interp.uwnd[:],
+            90.0 + (numpy.degrees(numpy.arctan2(tempdrop_obj.interp.uwnd[:],
                                          tempdrop_obj.interp.vwnd[:])))
         tempdrop_obj.interp.dist = (numpy.sqrt(tempdrop_obj.interp.uwnd[:]**2.0 +
                                                tempdrop_obj.interp.vwnd[:]**2.0))* \
                                                tempdrop_obj.layer.fallrate[:]
         tempdrop_obj = self.advect(tempdrop_obj = tempdrop_obj)
 
-
-        self.write_hsa(tempdrop_obj=tempdrop_obj)
-
-        #format_string = "{:2d} {:7.1f} {:4d} {:7.3f} {:7.3f} {:7.1f} {:7.1f} {:7.1f} {:8.1f} {:6.1f} {:6.1f} {}"
-        #for 
-        #tempdrop_obj.drift = parser_interface.object_define()
-        #print(tempdrop_obj.interp)
-        #quit()
-#        with open("test.out", "w", encoding="utf-8") as file:
-#            file.write(format_string.format(tempdrop_obj))
-                
-            
-        
-        #xlat_list = [tempdrop_obj.locate.rel[0]]
-        #xlon_list = [tempdrop_obj.locate.rel[1]]
-        #(xlat, xlon) = tempdrop_obj.locate.rel
-        #for idx in range(len(tempdrop_obj.layer.dist[:])):
-        #    (xlat, xlon) = bearing_geoloc(
-        #        loc1=(xlat, xlon), dist=tempdrop_obj.layer.dist[idx], heading=
-        #        tempdrop_obj.layer.heading[idx]
-        #        )
-        #    xlat_list.append(xlat)
-        #    xlon_list.append(xlon)
-        #    (xlat, xlon) = (xlat_list[-1], xlon_list[-1])
-        #tempdrop_obj = self.normalize(tempdrop_obj=tempdrop_obj, xlat_list=xlat_list,
-        #                              xlon_list=xlon_list)
-            
         return tempdrop_obj
         
     @privatemethod
@@ -417,6 +466,8 @@ class TEMPDROP(Observation):
                              value for (key, value) in obsdict.items()}
         tempdrop_obj.frmtsonde = frmtdict
 
+
+
         return tempdrop_obj
 
     @privatemethod
@@ -451,6 +502,7 @@ class TEMPDROP(Observation):
         tempdrop_obj.interp = parser_interface.object_define()
         msg = "Interpolating decoded TEMPDROP observations."
         self.logger.info(msg=msg)
+        
         interp_obj = parser_interface.object_define()
         varname_list = self.varname_list[:]
         varname_list.append("flag")
@@ -464,6 +516,7 @@ class TEMPDROP(Observation):
                     (interp_obj.pres[idx]) < self.psfc_flag and (interp_obj.flag[idx].lower()
                                                          in self.validlevs_list)]
         pres = list(itemgetter(*idx_list)(interp_obj.pres))
+        tempdrop_obj.interp.flag = list(itemgetter(*idx_list)(interp_obj.flag))
         tempdrop_obj.interp.hgt = numpy.array(self.interp(varin=list(itemgetter(*idx_list)(interp_obj.hgt)),
                                                           zarr=pres)
                                               )
@@ -663,6 +716,41 @@ class TEMPDROP(Observation):
             
         return tempdrop_obj
 
+    def update_time(self: Observation, tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
+        """
+
+        """
+
+        datestr_yymmdd = f"{tempdrop_obj.dateinfo.year_short}{tempdrop_obj.dateinfo.month}{tempdrop_obj.dateinfo.day}. "
+        datestr_hhmm = f"{tempdrop_obj.dateinfo.hour}{tempdrop_obj.dateinfo.minute}"
+
+        tempdrop_obj.interp.offset_seconds = [0]
+        #for idx in range(0, len(tempdrop_obj.interp.lat)):
+            #loc1 = (tempdrop_obj.interp.lat[idx],tempdrop_obj.interp.lon[idx])
+            #loc2 = (tempdrop_obj.interp.lat[idx + 1],tempdrop_obj.interp.lon[idx + 1])
+            #uwnd = tempdrop_obj.interp.uwnd[idx]
+            #vwnd = tempdrop_obj.interp.vwnd[idx]
+            #dist = haversine(loc1=loc1, loc2=loc2)
+            #velo = numpy.sqrt(uwnd*uwnd + vwnd*vwnd)
+            #offset_seconds = dist/velo
+
+            #offset_seconds = (tempdrop_obj.interp.pres[idx] - tempdrop_obj.interp.pres[idx+1])/tempdrop_obj.layer.fallrate[idx]
+            #print(offset_seconds)
+            #tempdrop_obj.interp.offset_seconds.append(dist/velo)
+
+        #print(sum(tempdrop_obj.interp.offset_seconds))
+        
+            
+        #print(tempdrop_obj.interp.lat)
+        quit()
+        
+        dtime_list = [sum(tempdrop_obj.layer.fallrate[0:idx]) for idx in range(len(tempdrop_obj.layer.fallrate))]
+        for (idx, dtime) in enumerate(dtime_list):
+            print(dtime, tempdrop_obj.layer.fallrate[idx])
+
+
+        
+
     def run(self: Observation, filepath: str) -> SimpleNamespace:
         """
 
@@ -678,7 +766,7 @@ class TEMPDROP(Observation):
         tempdrop_obj = self.interpsonde(tempdrop_obj=tempdrop_obj)
         if self.correct_drift:
             tempdrop_obj = self.drift(tempdrop_obj=tempdrop_obj)
-
-
+            tempdrop_obj = self.update_time(tempdrop_obj=tempdrop_obj)
+        #self.write_hsa(tempdrop_obj=tempdrop_obj)
     
     
