@@ -135,28 +135,19 @@ class TEMPDROP(Observation):
         return varout
 
     @staticmethod
-    def fallrate(tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
+    def fallrate(avgp: numpy.array, avgt: numpy.array, psfc: float) -> numpy.array:
         """
 
         """
 
-        
-    
-    @staticmethod
-    def fallrate2(avgp: numpy.array, avgt: numpy.array, psfc: float) -> numpy.array:
-        """
+        flrtarr = numpy.zeros(len(avgp)+1)
+        for idx in range(1, len(avgp)+1):
+            try:
+                flrtarr[idx] = gsndfall2(pr=avgp[idx], te=avgt[idx], bad=True, sfcp=psfc,
+                                         mbps=True)
+            except IndexError:
+                pass
 
-        """
-
-        flrtarr = numpy.zeros(len(avgp+1))
-        for idx in range(len(avgp)):
-            flrtarr[idx] = gsndfall2(pr=avgp[idx], te=avgt[idx], bad=True, sfcp=psfc,
-                                     mbps=False)
-            print(avgp[idx], avgt[idx], psfc, flrtarr[idx])
-
-        #print(flrtarr)
-        #print(sum(flrtarr)/60.0)
-        quit()
 
         return flrtarr
 
@@ -168,8 +159,8 @@ class TEMPDROP(Observation):
         """
 
         lymnarr = numpy.empty(numpy.shape(vararr))
-        for idx in range(len(vararr) - 1):
-            pidx = (idx + 1)
+        for idx in range(1, len(vararr)):
+            pidx = (idx - 1)
             lymnarr[pidx] = statistics.mean([vararr[idx], vararr[pidx]])
         lymnarr = numpy.array(lymnarr)
             
@@ -191,9 +182,6 @@ class TEMPDROP(Observation):
                 datestr=cycle, in_frmttyp=GLOBAL,
                 out_frmttyp=GENERAL, offset_seconds=dtime)
             timestamp_list.append(ptime)
-
-        print(timestamp_list)
-        quit()
 
         return timestamp_list
 
@@ -322,10 +310,20 @@ class TEMPDROP(Observation):
                                          tempdrop_obj.interp.vwnd[:])))
         tempdrop_obj.interp.dist = (numpy.sqrt(tempdrop_obj.interp.uwnd[:]**2.0 +
                                                tempdrop_obj.interp.vwnd[:]**2.0))* \
-                                               tempdrop_obj.layer.fallrate[:]
+                                               tempdrop_obj.interp.fallrate[:]
         tempdrop_obj = self.advect(tempdrop_obj = tempdrop_obj)
 
         return tempdrop_obj
+
+    @staticmethod
+    def choparr(vararr: numpy.array) -> numpy.array:
+        """
+
+        """
+
+        vararr = vararr[::1][::-1][1::]
+
+        return vararr
         
     @privatemethod
     def correct(self: Observation, tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
@@ -334,16 +332,13 @@ class TEMPDROP(Observation):
         """
 
         tempdrop_obj.layer = parser_interface.object_define()
-        (avgp_list, avgt_list, avgu_list, avgv_list, rate_list) = [[] for idx in range(5)]
         psfc = tempdrop_obj.interp.psfc
-        tempdrop_obj.layer.avgp = self.layer_mean(vararr=tempdrop_obj.interp.pres)
-        tempdrop_obj.layer.avgt = self.layer_mean(vararr=tempdrop_obj.interp.temp)
-        tempdrop_obj.layer.avgu = self.layer_mean(vararr=tempdrop_obj.interp.uwnd)
-        tempdrop_obj.layer.avgv = self.layer_mean(vararr=tempdrop_obj.interp.vwnd)
-        tempdrop_obj.layer.fallrate = self.fallrate(avgp=tempdrop_obj.layer.avgp,
-                                                    avgt=tempdrop_obj.layer.avgt,
-                                                    psfc=psfc
-                                                    )
+        tempdrop_obj.layer.avgp = self.choparr(vararr=self.layer_mean(vararr=tempdrop_obj.interp.pres))
+        tempdrop_obj.layer.avgt = self.choparr(vararr=self.layer_mean(vararr=tempdrop_obj.interp.temp))
+        tempdrop_obj.layer.avgu = self.choparr(vararr=self.layer_mean(vararr=tempdrop_obj.interp.uwnd))
+        tempdrop_obj.layer.avgv = self.choparr(vararr=self.layer_mean(vararr=tempdrop_obj.interp.vwnd))
+        fallrate = self.fallrate(avgp=tempdrop_obj.layer.avgp, avgt=tempdrop_obj.layer.avgt,psfc=psfc)
+        tempdrop_obj.interp.fallrate = self.interp(varin=fallrate,zarr=tempdrop_obj.interp.pres)
         
         return tempdrop_obj
         
@@ -584,11 +579,18 @@ class TEMPDROP(Observation):
                 (locstr, timestr) = (infostr_items[0], infostr_items[1])
                 (lat, lon) = self.obslocation(locstr=locstr)
                 tempdrop_obj.locate = parser_interface.object_setattr(
-                    object_in=tempdrop_obj.locate, key=infostr, value=(lat, lon)
+                    object_in=tempdrop_obj.locate, key=infostr, value=(lat, lon, timestr)
                 )
             except (ValueError, IndexError):
                 msg = f"TEMPDROP message string {infostr.upper()} could not be located."
                 self.logger.warn(msg=msg)
+
+
+        datestr = f"{tempdrop_obj.dateinfo.year}{tempdrop_obj.dateinfo.month}{tempdrop_obj.dateinfo.day}"
+        prin
+                
+        print(tempdrop_obj.locate.rel[2])
+        quit()
                 
         return tempdrop_obj
 
@@ -605,7 +607,7 @@ class TEMPDROP(Observation):
         Parameters
         ----------
 
-        locstr: str
+        locstr: ``str``
 
             A Python string containing the location information to be
             parsed.
@@ -613,12 +615,12 @@ class TEMPDROP(Observation):
         Returns
         -------
 
-        lat: float
+        lat: ``float``
 
             A Python float value containing the latitude coordinate
             for the observation location.
 
-        lon: float
+        lon: ``float``
 
             A Python float value containing the longitude coordinate
             for the observation location.
@@ -721,34 +723,33 @@ class TEMPDROP(Observation):
 
         """
 
-        datestr_yymmdd = f"{tempdrop_obj.dateinfo.year_short}{tempdrop_obj.dateinfo.month}{tempdrop_obj.dateinfo.day}. "
+        datestr_yymmdd = f"{tempdrop_obj.dateinfo.year_short}{tempdrop_obj.dateinfo.month}{tempdrop_obj.dateinfo.day}."
         datestr_hhmm = f"{tempdrop_obj.dateinfo.hour}{tempdrop_obj.dateinfo.minute}"
 
-        tempdrop_obj.interp.offset_seconds = [0]
-        #for idx in range(0, len(tempdrop_obj.interp.lat)):
-            #loc1 = (tempdrop_obj.interp.lat[idx],tempdrop_obj.interp.lon[idx])
-            #loc2 = (tempdrop_obj.interp.lat[idx + 1],tempdrop_obj.interp.lon[idx + 1])
-            #uwnd = tempdrop_obj.interp.uwnd[idx]
-            #vwnd = tempdrop_obj.interp.vwnd[idx]
-            #dist = haversine(loc1=loc1, loc2=loc2)
-            #velo = numpy.sqrt(uwnd*uwnd + vwnd*vwnd)
-            #offset_seconds = dist/velo
-
-            #offset_seconds = (tempdrop_obj.interp.pres[idx] - tempdrop_obj.interp.pres[idx+1])/tempdrop_obj.layer.fallrate[idx]
-            #print(offset_seconds)
-            #tempdrop_obj.interp.offset_seconds.append(dist/velo)
-
-        #print(sum(tempdrop_obj.interp.offset_seconds))
-        
-            
-        #print(tempdrop_obj.interp.lat)
+        print(tempdrop_obj.dateinfo.cycle)
         quit()
-        
-        dtime_list = [sum(tempdrop_obj.layer.fallrate[0:idx]) for idx in range(len(tempdrop_obj.layer.fallrate))]
-        for (idx, dtime) in enumerate(dtime_list):
-            print(dtime, tempdrop_obj.layer.fallrate[idx])
 
+        tempdrop_obj.interp.offset_seconds = [0]
+        for idx in range(1, len(tempdrop_obj.interp.lat)):
+            loc1 = (tempdrop_obj.interp.lat[idx-1],tempdrop_obj.interp.lon[idx-1])
+            loc2 = (tempdrop_obj.interp.lat[idx],tempdrop_obj.interp.lon[idx])
+            uwnd = tempdrop_obj.interp.uwnd[idx-1]
+            vwnd = tempdrop_obj.interp.vwnd[idx-1]
+            dist = haversine(loc1=loc1, loc2=loc2)
+            velo = numpy.sqrt(uwnd*uwnd + vwnd*vwnd)
+            tempdrop_obj.interp.offset_seconds.append(dist/velo)
 
+        (tempdrop_obj.interp.yymmdd, tempdrop_obj.interp.hhmm) = [[] for idx in range(2)]
+        tempdrop_obj.interp.yymmdd.append(datestr_yymmdd)
+        tempdrop_obj.interp.hhmm.append(datestr_hhmm)
+        dtime_list = [sum(tempdrop_obj.interp.offset_seconds[0:idx]) for idx in range(len(tempdrop_obj.interp.offset_seconds))]
+        for dtime in dtime_list:
+            datestr = datetime_interface.datestrupdate(
+                datestr=tempdrop_obj.dateinfo.cycle,
+                in_frmttyp=GLOBAL, out_frmttyp="%Y%m%d. %H%M",
+                offset_seconds=dtime)
+            print(datestr)
+            
         
 
     def run(self: Observation, filepath: str) -> SimpleNamespace:
@@ -759,14 +760,14 @@ class TEMPDROP(Observation):
         tempdrop_obj = parser_interface.object_define()
         tempdrop_obj.filepath = filepath
         tempdrop_obj = self.tempdrop(tempdrop_obj=tempdrop_obj)
-        tempdrop_obj = self.locate(tempdrop_obj=tempdrop_obj)
         tempdrop_obj = self.dateinfo(tempdrop_obj=tempdrop_obj)
+        tempdrop_obj = self.locate(tempdrop_obj=tempdrop_obj)
         tempdrop_obj = self.decode(tempdrop_obj=tempdrop_obj)
         tempdrop_obj = self.frmtsonde(tempdrop_obj=tempdrop_obj)
         tempdrop_obj = self.interpsonde(tempdrop_obj=tempdrop_obj)
         if self.correct_drift:
             tempdrop_obj = self.drift(tempdrop_obj=tempdrop_obj)
             tempdrop_obj = self.update_time(tempdrop_obj=tempdrop_obj)
-        #self.write_hsa(tempdrop_obj=tempdrop_obj)
+        self.write_hsa(tempdrop_obj=tempdrop_obj)
     
     
