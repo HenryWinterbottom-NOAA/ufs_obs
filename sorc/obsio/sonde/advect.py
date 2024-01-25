@@ -1,10 +1,13 @@
-"""Module
+"""
+Module
 ------
 
     advect.py
 
 Description
 -----------
+
+    This module contains functions to advect observation sondes.
 
 Functions
 ---------
@@ -55,29 +58,29 @@ History
 
 # ----
 
+# pylint: disable=line-too-long
+# pylint: disable=no-name-in-module
+# pylint: disable=unused-argument
 
 # ----
 
+from types import SimpleNamespace
+from typing import Any, List
+
 import numpy
+from diags.grids.bearing_geoloc import bearing_geoloc
 from diags.grids.haversine import haversine
+from obsio.sonde.aoml import gsndfall2
 from obsio.sonde.hsa import choparr
+from scipy.interpolate import interp1d
 from tools import datetime_interface
 from utils.logger_interface import Logger
 from utils.timestamp_interface import GLOBAL
 
-from types import SimpleNamespace
-
-from typing import Any, List
-import numpy
-from scipy.interpolate import interp1d
-from obsio.sonde.aoml import gsndfall2
-
-from diags.grids.bearing_geoloc import bearing_geoloc
-
 # ----
 
 # Define all available module properties.
-__all__ = ["advect", "fall_rate", "interp_hsa", "update_time"]
+__all__ = ["advect", "fallrate", "interp_hsa", "update_time"]
 
 # ----
 
@@ -86,7 +89,9 @@ logger = Logger(caller_name=__name__)
 # ----
 
 
-def __normalize__(tempdrop_obj: SimpleNamespace, xlat_list: List, xlon_list: List) -> SimpleNamespace:
+def __normalize__(
+    tempdrop_obj: SimpleNamespace, xlat_list: List, xlon_list: List
+) -> SimpleNamespace:
     """
     Description
     -----------
@@ -97,7 +102,7 @@ def __normalize__(tempdrop_obj: SimpleNamespace, xlat_list: List, xlon_list: Lis
 
     Parameters
     ----------
-    
+
     xlat_list: ``List``
 
         A Python list of latitude coordinate values collected from the
@@ -125,12 +130,23 @@ def __normalize__(tempdrop_obj: SimpleNamespace, xlat_list: List, xlon_list: Lis
     normb_xlat = max(tempdrop_obj.locate.rel[0], tempdrop_obj.locate.spg[0])
     norma_xlon = min(tempdrop_obj.locate.rel[1], tempdrop_obj.locate.spg[1])
     normb_xlon = max(tempdrop_obj.locate.rel[1], tempdrop_obj.locate.spg[1])
-    tempdrop_obj.interp.lat = [norma_xlat + (xlat_list[idx] - min(xlat_list))*(normb_xlat - norma_xlat)/
-                               (max(xlat_list) - min(xlat_list)) for idx in range(len(xlat_list))]
-    tempdrop_obj.interp.lon = [norma_xlon + (xlon_list[idx] - min(xlon_list))*(normb_xlon - norma_xlon)/
-                               (max(xlon_list) - min(xlon_list)) for idx in range(len(xlon_list))]
+    tempdrop_obj.interp.lat = [
+        norma_xlat
+        + (xlat_list[idx] - min(xlat_list))
+        * (normb_xlat - norma_xlat)
+        / (max(xlat_list) - min(xlat_list))
+        for idx in range(len(xlat_list))
+    ]
+    tempdrop_obj.interp.lon = [
+        norma_xlon
+        + (xlon_list[idx] - min(xlon_list))
+        * (normb_xlon - norma_xlon)
+        / (max(xlon_list) - min(xlon_list))
+        for idx in range(len(xlon_list))
+    ]
 
     return tempdrop_obj
+
 
 # ----
 
@@ -169,18 +185,22 @@ def advect(tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
     (xlat, xlon) = tempdrop_obj.locate.rel
     for idx in range(len(tempdrop_obj.interp.dist[:])):
         (xlat, xlon) = bearing_geoloc(
-            loc1=(xlat, xlon), dist=tempdrop_obj.interp.dist[idx], heading=
-            tempdrop_obj.interp.heading[idx]
+            loc1=(xlat, xlon),
+            dist=tempdrop_obj.interp.dist[idx],
+            heading=tempdrop_obj.interp.heading[idx],
         )
         xlat_list.append(xlat)
         xlon_list.append(xlon)
         (xlat, xlon) = (xlat_list[-1], xlon_list[-1])
-    tempdrop_obj = __normalize__(tempdrop_obj=tempdrop_obj, xlat_list=xlat_list,
-                                 xlon_list=xlon_list)
+    tempdrop_obj = __normalize__(
+        tempdrop_obj=tempdrop_obj, xlat_list=xlat_list, xlon_list=xlon_list
+    )
 
     return tempdrop_obj
 
+
 # ----
+
 
 def fallrate(avgp: numpy.array, avgt: numpy.array, psfc: float) -> numpy.array:
     """
@@ -217,17 +237,20 @@ def fallrate(avgp: numpy.array, avgt: numpy.array, psfc: float) -> numpy.array:
     """
 
     # Compute the theoretical fall-rate.
-    flrtarr = numpy.zeros(len(avgp)+1)
-    for idx in range(1, len(avgp)+1):
+    flrtarr = numpy.zeros(len(avgp) + 1)
+    for idx in range(1, len(avgp) + 1):
         try:
-            flrtarr[idx] = gsndfall2(pr=avgp[idx], te=avgt[idx],
-                                     bad=True, sfcp=psfc, mbps=True)
+            flrtarr[idx] = gsndfall2(
+                pr=avgp[idx], te=avgt[idx], bad=True, sfcp=psfc, mbps=True
+            )
         except IndexError:
             pass
 
     return flrtarr
 
+
 # ----
+
 
 def interp_hsa(
     varin: numpy.array,
@@ -295,10 +318,9 @@ def interp_hsa(
 
     return varout
 
-# ----
-
 
 # ----
+
 
 def update_time(tempdrop_obj: SimpleNamespace) -> SimpleNamespace:
     """
