@@ -1,0 +1,51 @@
+---
+source:
+  required: true
+  idx: 0
+  type: int
+time_ymd:
+  required: true
+  idx: 1
+  type: float
+time_hm:
+  required: true
+  idx: 2
+  type: float
+lat:
+  required: true
+  idx: 3
+  type: float
+lon:
+  required: true
+  idx: 4
+  type: float
+pres:
+  required: true
+  idx: 5
+  type: float
+temp:
+  required: true
+  idx: 6
+  type: float
+rh:
+  required: true
+  idx: 7
+  type: float
+hgt:
+  required: true
+  idx: 8
+  type: float
+uwnd:
+  required: true
+  idx: 9
+  type: float
+vwnd:
+  required: true
+  idx: 10
+  type: float
+flag:
+  idx: 11
+  type: str
+  required: true
+
+     

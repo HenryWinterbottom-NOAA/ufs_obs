@@ -48,10 +48,11 @@ In order to install the respective Python packages upon which
 ~~~shell
 user@host:$ cd /path/to/ufs_obs
 user@host:$ /path/to/pip install update
-user@host:$ /path/to/pip install -r /path/to/ufs_obs/requirements.pip
+user@host:$ /path/to/pip install -r /path/to/ufs_obs/requirements.txt
+user@host:$ ./build.sh
 ~~~
 
-For additional information using `pip` and `requirements.pip` type files, see [here](https://pip.pypa.io/en/stable/reference/requirements-file-format/).
+For additional information using `pip` and `requirements.txt` type files, see [here](https://pip.pypa.io/en/stable/reference/requirements-file-format/).
 
 # Docker Containers
 
