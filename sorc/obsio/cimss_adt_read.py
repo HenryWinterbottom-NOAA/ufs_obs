@@ -14,11 +14,6 @@ Description
 Functions
 ---------
 
-    filter_adt(func)
-
-        This function is a wrapper function for the filtering of ADT
-        observations relative to a specified CIMSS ADT attribute/type.
-
     __adt_geoloc__(adtobs)
 
         This function collects the geographical location attributes
@@ -33,6 +28,26 @@ Functions
 
         This function collects the timestamp for the respective ADT
         observation.
+
+    __atcf__(adtobs_obj)
+
+        This function formats the CIMSS ADT observations for ATCF
+        record creation.
+
+    __atcf_info__(adtobs_obj)
+
+        This function collects the observation information attributes
+        and formats them accordingly for the ATCF record creation.
+
+    __atcf_intns__(adtobs_obj)
+
+        This function collects the observation intensity attributes
+        and formats them accordingly for the ATCF record creation.
+
+    __atcf_latlon__(adtobs_obj)
+
+        This function collects the observation location attributes and
+        formats them accordingly for the ATCF record creation.
 
     __build_adt__(adtobs_list)
 
@@ -54,6 +69,12 @@ Functions
         This function filters ADT observations relative to the CIMSS
         ADT `SCENE TYPE` attribute/type.
 
+    __get_adtdict__(adtobs_obj, adtobs)
+    
+        This function collects and returns the Python dictionary
+        containing the attributes for the respective CIMSS ADT
+        observation.
+
     __get_adtobs__(filepath)
 
         This function retrieves the ADT observations from the file;
@@ -62,7 +83,13 @@ Functions
         within the relevant lines of the respective input file
         `filepath`.
 
-    read_cimssadt_history(filepath, scene_exclude = None, fix_exclude = None)
+    filter_adt(func)
+
+        This function is a wrapper function for the filtering of ADT
+        observations relative to a specified CIMSS ADT attribute/type.
+
+    read_cimssadt_history(filepath, scene_exclude = None, fix_exclude = None,
+                          atcf_format = False)
 
         This function reads a CIMSS ADT history formatted file and
         returns a Python SimpleNamespace object containing the
@@ -88,14 +115,17 @@ History
 # ----
 
 
+import astropy
 import functools
+import numpy
 from types import SimpleNamespace
 from typing import Callable, Dict, List, Tuple
 
 from exceptions import CIMSSADTError
+from pint import UnitRegistry
 from metpy.units import units
 from tools import datetime_interface, parser_interface
-from utils.constants_interface import hPa2Pa, kts2mps
+from utils.constants_interface import hPa2Pa, kts2mps, mps2kts
 from utils.logger_interface import Logger
 from utils.table_interface import compose, init_table
 from utils.timestamp_interface import GLOBAL
@@ -108,6 +138,7 @@ __all__ = ["read_cimssadt_history"]
 # ----
 
 logger = Logger(caller_name=__name__)
+ureg = UnitRegistry()
 
 # ----
 
@@ -162,7 +193,7 @@ def filter_adt(func: Callable) -> Callable:
         Returns
         -------
 
-        outlist: List
+        outlist: ``List``
 
             A Python list of filtered ADT observations.
 
@@ -183,7 +214,6 @@ def filter_adt(func: Callable) -> Callable:
         return outlist
 
     return wrapped_function
-
 
 # ----
 
@@ -326,6 +356,177 @@ def __adt_time__(adtobs: str) -> str:
 
     return adt_time
 
+# ----
+
+def __atcf__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
+    """
+    Description
+    -----------
+
+    This function formats the CIMSS ADT observations for ATCF record
+    creation.
+
+    Parameters
+    ----------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observations.
+
+    Returns
+    -------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace containing the relevant CIMSS ADT
+        observations formatted for ATCF record creation.
+
+    """
+
+    # Format the CIMSS ADT observations for ATCF record creation.
+    adtobs_obj = __atcf_info__(adtobs_obj=adtobs_obj)
+    adtobs_obj = __atcf_latlon__(adtobs_obj=adtobs_obj)
+    adtobs_obj = __atcf_intns__(adtobs_obj=adtobs_obj)
+
+    return adtobs_obj
+
+# ----
+
+def __atcf_info__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
+    """
+    Description
+    -----------
+
+    This function collects the observation information attributes and
+    formats them accordingly for the ATCF record creation.
+
+    Parameters
+    ----------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observations.    
+
+    Returns
+    -------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observation information attributes for the ATCF record
+        creations.
+
+    """
+
+    # Collect the CIMSS ADT observation information attributes.
+    for adtobs in vars(adtobs_obj):
+        adtobs_dict = __get_adtdict__(adtobs_obj=adtobs_obj, adtobs=adtobs)
+        adtobs_dict["tcid"] = adtobs
+        adtobs_dict["tcv_center"] = "CIMSS"
+        adtobs_dict["time_hm"] = datetime_interface.datestrupdate(
+            datestr=adtobs_dict["timestamp"], in_frmttyp=GLOBAL,
+            out_frmttyp="%H%M")
+        adtobs_dict["time_ymd"] = datetime_interface.datestrupdate(
+            datestr=adtobs_dict["timestamp"], in_frmttyp=GLOBAL,
+            out_frmttyp="%Y%m%d")
+        adtobs_obj = parser_interface.object_setattr(
+            object_in=adtobs_obj, key=adtobs, value=adtobs_dict)
+
+    return adtobs_obj
+        
+
+# ----
+
+def __atcf_intns__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
+    """
+    Description
+    -----------
+
+    This function collects the observation intensity attributes and
+    formats them accordingly for the ATCF record creation.
+
+    Parameters
+    ----------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observations.
+
+    Returns
+    -------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observation intensity attributes for the ATCF record
+        creations.
+
+    """
+
+    # Collect the CIMSS ADT observation intensity attributes.
+    for adtobs in vars(adtobs_obj):
+        adtobs_dict = __get_adtdict__(adtobs_obj=adtobs_obj, adtobs=adtobs)
+        adtobs_dict["mslp"] = int(numpy.round(units.Quantity(
+            parser_interface.dict_key_value(dict_in=adtobs_dict, key="mslp"),
+            "hectopascal").magnitude))
+        adtobs_dict["vmax"] = int(numpy.round(parser_interface.dict_key_value(
+            dict_in=adtobs_dict, key="vmax").magnitude.value))
+        adtobs_obj = parser_interface.object_setattr(
+            object_in=adtobs_obj, key=adtobs, value=adtobs_dict)        
+        
+    return adtobs_obj
+
+# ----
+
+def __atcf_latlon__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
+    """
+    Description
+    -----------
+
+    This function collects the observation location attributes and
+    formats them accordingly for the ATCF record creation.
+
+    Parameters
+    ----------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observations.
+
+    Returns
+    -------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observation location attributes for the ATCF record
+        creations.
+
+    """
+
+    # Collect the CIMSS ADT observation location attributes.
+    for adtobs in vars(adtobs_obj):
+        adtobs_dict = __get_adtdict__(adtobs_obj=adtobs_obj, adtobs=adtobs)
+        lat = parser_interface.dict_key_value(dict_in=adtobs_dict, key="lat")
+        if lat < 0.0:
+            hemins_str = "S"
+        else:
+            hemins_str = "N"
+        adtobs_dict["lat"] = f"{int(lat*10.0)}" + f"{hemins_str}"
+        lon = parser_interface.dict_key_value(dict_in=adtobs_dict, key="lon")
+        if lon < 0.0:
+            hemiew_str = "W"
+        else:
+            hemiew_str = "E"        
+        adtobs_dict["lon"] = f"{int(lon*10.0)}" + f"{hemiew_str}"
+        adtobs_obj = parser_interface.object_setattr(
+            object_in=adtobs_obj, key=adtobs, value=adtobs_dict)
+
+    return adtobs_obj
 
 # ----
 
@@ -511,6 +712,45 @@ def __filter_scene__(adtobs_list: List, scene_exclude: List) -> List:
 
 # ----
 
+def __get_adtdict__(adtobs_obj: SimpleNamespace, adtobs: str) -> Dict:
+    """
+    Description
+    -----------
+
+    This function collects and returns the Python dictionary
+    containing the attributes for the respective CIMSS ADT
+    observation.
+
+    Parameters
+    ----------
+
+    adtobs_obj: ``SimpleNamespace``
+
+        A Python SimpleNamespace object containing the relevant CIMSS
+        ADT observations.
+
+    adtobs: ``str``
+
+        A Python string containing the respective ADT observation to
+        be parsed.
+
+    Returns
+    -------
+
+    adtobs_dict: ``Dict``
+
+        A Python dictionary containng the attributes for the
+        respective CIMSS ADT observation.
+
+    """
+
+    # Collect the attributes for the respective CIMSS ADT observation.
+    adtobs_dict = parser_interface.object_getattr(
+        object_in=adtobs_obj, key=adtobs)
+
+    return adtobs_dict
+
+# ----
 
 def __get_adtobs__(filepath: str) -> List:
     """
@@ -569,8 +809,8 @@ def __get_adtobs__(filepath: str) -> List:
 
 
 def read_cimssadt_history(
-    filepath: str, scene_exclude: List = None, fix_exclude: List = None
-) -> SimpleNamespace:
+        filepath: str, scene_exclude: List = None, fix_exclude: List = None,
+        atcf_format: bool = False) -> SimpleNamespace:
     """
     Description
     -----------
@@ -600,6 +840,12 @@ def read_cimssadt_history(
         A Python list containing `FIX MTHD` observation attributes to
         be excluded from the ADT observation collection.
 
+    atcf_format: ``bool``, optional
+
+        A Python boolean valued variable specifying whether to format
+        the CIMSS ADT observation attributes for downstream ATCF
+        record creation.
+
     Returns
     -------
 
@@ -618,5 +864,7 @@ def read_cimssadt_history(
         adtobs_list=adtobs_list, fix_exclude=fix_exclude)
     adtobs_obj = __build_adt__(adtobs_list=adtobs_list)
     __build_table__(adtobs_obj=adtobs_obj)
-
+    if atcf_format:
+        adtobs_obj = __atcf__(adtobs_obj=adtobs_obj)
+        
     return adtobs_obj
