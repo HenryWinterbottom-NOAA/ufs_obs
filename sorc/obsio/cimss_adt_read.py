@@ -70,7 +70,7 @@ Functions
         ADT `SCENE TYPE` attribute/type.
 
     __get_adtdict__(adtobs_obj, adtobs)
-    
+
         This function collects and returns the Python dictionary
         containing the attributes for the respective CIMSS ADT
         observation.
@@ -115,17 +115,16 @@ History
 # ----
 
 
-import astropy
 import functools
-import numpy
 from types import SimpleNamespace
 from typing import Callable, Dict, List, Tuple
 
+import numpy
 from exceptions import CIMSSADTError
-from pint import UnitRegistry
 from metpy.units import units
+from pint import UnitRegistry
 from tools import datetime_interface, parser_interface
-from utils.constants_interface import hPa2Pa, kts2mps, mps2kts
+from utils.constants_interface import hPa2Pa, kts2mps
 from utils.logger_interface import Logger
 from utils.table_interface import compose, init_table
 from utils.timestamp_interface import GLOBAL
@@ -208,12 +207,12 @@ def filter_adt(func: Callable) -> Callable:
                 if not any(ex in item for ex in exclude.rsplit())
             ]
         except AttributeError:
-            outlist = [item for item in inlist if not any(
-                ex in item for ex in exclude)]
+            outlist = [item for item in inlist if not any(ex in item for ex in exclude)]
 
         return outlist
 
     return wrapped_function
+
 
 # ----
 
@@ -356,7 +355,9 @@ def __adt_time__(adtobs: str) -> str:
 
     return adt_time
 
+
 # ----
+
 
 def __atcf__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
     """
@@ -391,7 +392,9 @@ def __atcf__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
 
     return adtobs_obj
 
+
 # ----
+
 
 def __atcf_info__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
     """
@@ -407,7 +410,7 @@ def __atcf_info__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
     adtobs_obj: ``SimpleNamespace``
 
         A Python SimpleNamespace object containing the relevant CIMSS
-        ADT observations.    
+        ADT observations.
 
     Returns
     -------
@@ -426,18 +429,20 @@ def __atcf_info__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
         adtobs_dict["tcid"] = adtobs
         adtobs_dict["tcv_center"] = "CIMSS"
         adtobs_dict["time_hm"] = datetime_interface.datestrupdate(
-            datestr=adtobs_dict["timestamp"], in_frmttyp=GLOBAL,
-            out_frmttyp="%H%M")
+            datestr=adtobs_dict["timestamp"], in_frmttyp=GLOBAL, out_frmttyp="%H%M"
+        )
         adtobs_dict["time_ymd"] = datetime_interface.datestrupdate(
-            datestr=adtobs_dict["timestamp"], in_frmttyp=GLOBAL,
-            out_frmttyp="%Y%m%d")
+            datestr=adtobs_dict["timestamp"], in_frmttyp=GLOBAL, out_frmttyp="%Y%m%d"
+        )
         adtobs_obj = parser_interface.object_setattr(
-            object_in=adtobs_obj, key=adtobs, value=adtobs_dict)
+            object_in=adtobs_obj, key=adtobs, value=adtobs_dict
+        )
 
     return adtobs_obj
-        
+
 
 # ----
+
 
 def __atcf_intns__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
     """
@@ -469,17 +474,30 @@ def __atcf_intns__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
     # Collect the CIMSS ADT observation intensity attributes.
     for adtobs in vars(adtobs_obj):
         adtobs_dict = __get_adtdict__(adtobs_obj=adtobs_obj, adtobs=adtobs)
-        adtobs_dict["mslp"] = int(numpy.round(units.Quantity(
-            parser_interface.dict_key_value(dict_in=adtobs_dict, key="mslp"),
-            "hectopascal").magnitude))
-        adtobs_dict["vmax"] = int(numpy.round(parser_interface.dict_key_value(
-            dict_in=adtobs_dict, key="vmax").magnitude.value))
+        adtobs_dict["mslp"] = int(
+            numpy.round(
+                units.Quantity(
+                    parser_interface.dict_key_value(dict_in=adtobs_dict, key="mslp"),
+                    "hectopascal",
+                ).magnitude
+            )
+        )
+        adtobs_dict["vmax"] = int(
+            numpy.round(
+                parser_interface.dict_key_value(
+                    dict_in=adtobs_dict, key="vmax"
+                ).magnitude.value
+            )
+        )
         adtobs_obj = parser_interface.object_setattr(
-            object_in=adtobs_obj, key=adtobs, value=adtobs_dict)        
-        
+            object_in=adtobs_obj, key=adtobs, value=adtobs_dict
+        )
+
     return adtobs_obj
 
+
 # ----
+
 
 def __atcf_latlon__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
     """
@@ -521,12 +539,14 @@ def __atcf_latlon__(adtobs_obj: SimpleNamespace) -> SimpleNamespace:
         if lon < 0.0:
             hemiew_str = "W"
         else:
-            hemiew_str = "E"        
+            hemiew_str = "E"
         adtobs_dict["lon"] = f"{int(lon*10.0)}" + f"{hemiew_str}"
         adtobs_obj = parser_interface.object_setattr(
-            object_in=adtobs_obj, key=adtobs, value=adtobs_dict)
+            object_in=adtobs_obj, key=adtobs, value=adtobs_dict
+        )
 
     return adtobs_obj
+
 
 # ----
 
@@ -564,10 +584,8 @@ def __build_adt__(adtobs_list: List) -> SimpleNamespace:
     for idx, adtobs in enumerate(adtobs_list):
         adtobs_dict = {}
         adtobs_dict["timestamp"] = __adt_time__(adtobs=adtobs)
-        (adtobs_dict["lat"], adtobs_dict["lon"]
-         ) = __adt_geoloc__(adtobs=adtobs)
-        (adtobs_dict["mslp"], adtobs_dict["vmax"]
-         ) = __adt_intns__(adtobs=adtobs)
+        (adtobs_dict["lat"], adtobs_dict["lon"]) = __adt_geoloc__(adtobs=adtobs)
+        (adtobs_dict["mslp"], adtobs_dict["vmax"]) = __adt_intns__(adtobs=adtobs)
         adtobs_obj = parser_interface.object_setattr(
             object_in=adtobs_obj, key=f"ADT{idx:04}", value=adtobs_dict
         )
@@ -608,8 +626,7 @@ def __build_table__(adtobs_obj: SimpleNamespace) -> None:
         "Wind Speed (meter per second)",
     ]
     for adtobs in vars(adtobs_obj):
-        adtobs_dict = parser_interface.object_getattr(
-            object_in=adtobs_obj, key=adtobs)
+        adtobs_dict = parser_interface.object_getattr(object_in=adtobs_obj, key=adtobs)
         row = [
             adtobs,
             adtobs_dict["timestamp"],
@@ -712,6 +729,7 @@ def __filter_scene__(adtobs_list: List, scene_exclude: List) -> List:
 
 # ----
 
+
 def __get_adtdict__(adtobs_obj: SimpleNamespace, adtobs: str) -> Dict:
     """
     Description
@@ -745,12 +763,13 @@ def __get_adtdict__(adtobs_obj: SimpleNamespace, adtobs: str) -> Dict:
     """
 
     # Collect the attributes for the respective CIMSS ADT observation.
-    adtobs_dict = parser_interface.object_getattr(
-        object_in=adtobs_obj, key=adtobs)
+    adtobs_dict = parser_interface.object_getattr(object_in=adtobs_obj, key=adtobs)
 
     return adtobs_dict
 
+
 # ----
+
 
 def __get_adtobs__(filepath: str) -> List:
     """
@@ -809,8 +828,11 @@ def __get_adtobs__(filepath: str) -> List:
 
 
 def read_cimssadt_history(
-        filepath: str, scene_exclude: List = None, fix_exclude: List = None,
-        atcf_format: bool = False) -> SimpleNamespace:
+    filepath: str,
+    scene_exclude: List = None,
+    fix_exclude: List = None,
+    atcf_format: bool = False,
+) -> SimpleNamespace:
     """
     Description
     -----------
@@ -858,13 +880,11 @@ def read_cimssadt_history(
 
     # Collect the relevant CIMSS ADT observation attributes.
     adtobs_list = __get_adtobs__(filepath=filepath)
-    adtobs_list = __filter_scene__(
-        adtobs_list=adtobs_list, scene_exclude=scene_exclude)
-    adtobs_list = __filter_fix__(
-        adtobs_list=adtobs_list, fix_exclude=fix_exclude)
+    adtobs_list = __filter_scene__(adtobs_list=adtobs_list, scene_exclude=scene_exclude)
+    adtobs_list = __filter_fix__(adtobs_list=adtobs_list, fix_exclude=fix_exclude)
     adtobs_obj = __build_adt__(adtobs_list=adtobs_list)
     __build_table__(adtobs_obj=adtobs_obj)
     if atcf_format:
         adtobs_obj = __atcf__(adtobs_obj=adtobs_obj)
-        
+
     return adtobs_obj
