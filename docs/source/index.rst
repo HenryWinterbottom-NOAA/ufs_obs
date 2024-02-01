@@ -42,3 +42,5 @@ executed as follows.
    :maxdepth: 2
 
    atcf.rst
+   cimss_adt.rst
+   examples.rst

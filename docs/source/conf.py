@@ -35,9 +35,9 @@ import subprocess
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.join(os.path.abspath("."), "../../sorc"))
 sys.path.insert(0, os.path.abspath("../../sorc"))
-subprocess.run(['git', 'clone', '--recursive',
-                'https://github.com/HenryWinterbottom-NOAA/ufs_pyutils.git'], check=True, text=True)
-sys.path.insert(0, os.path.join(os.getcwd(), "ufs_pyutils/sorc"))
+#subprocess.run(['git', 'clone', '--recursive',
+#                'https://github.com/HenryWinterbottom-NOAA/ufs_pyutils.git'], check=True, text=True)
+#sys.path.insert(0, os.path.join(os.getcwd(), "ufs_pyutils/sorc"))
 
 # ----
 

@@ -58,7 +58,7 @@ def build_obs(func: Callable) -> Callable:
     Parameters
     ----------
 
-    func: Callable
+    func: ``Callable``
 
         A Python Callable object containing the function to be
         wrapped.
@@ -66,7 +66,7 @@ def build_obs(func: Callable) -> Callable:
     Returns
     -------
 
-    wrapped_function: Callable
+    wrapped_function: ``Callable``
 
         A Python Callable object containing the wrapped function.
 
@@ -87,12 +87,12 @@ def build_obs(func: Callable) -> Callable:
         Other Parameters
         ----------------
 
-        args: Tuple
+        args: ``Tuple``
 
             A Python tuple containing additional arguments passed to
             the constructor.
 
-        kwargs: Dict
+        kwargs: ``Dict``
 
             A Python dictionary containing additional key and value
             pairs to be passed to the constructor.
@@ -100,7 +100,7 @@ def build_obs(func: Callable) -> Callable:
         Returns
         -------
 
-        obs_dict: Dict
+        obs_dict: ``Dict``
 
             A Python dictionary containing observation values
             validated via the specified observation-type schema.

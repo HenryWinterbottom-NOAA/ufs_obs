@@ -119,9 +119,9 @@ class ATCF(Observation):
 
         # Build the TC-vitals record.
         schema_path = self.obs_type_obj.schema
-        obs_dict = parser_interface.object_todict(object_in=tcvobj)
+        #obs_dict = parser_interface.object_todict(object_in=tcvobj)
 
-        return (schema_path, obs_dict)
+        return (schema_path, tcvobj)
 
     @privatemethod
     def format_tcv(self: Observation, obs_dict: Dict) -> Dict:
@@ -152,11 +152,14 @@ class ATCF(Observation):
         schema_dict = YAML().read_yaml(yaml_file=self.obs_type_obj.schema)
         tcv_dict = {}
         for obs in obs_dict:
-            strfrmt = parser_interface.dict_key_value(
-                dict_in=schema_dict[obs], key="format", force=True, no_split=True
-            )
-            tcv_dict[obs] = strfrmt % obs_dict[obs]
-
+            try:
+                strfrmt = parser_interface.dict_key_value(
+                    dict_in=schema_dict[obs], key="format", force=True, no_split=True
+                )
+                tcv_dict[obs] = strfrmt % obs_dict[obs]
+            except KeyError:
+                pass
+                
         return tcv_dict
 
     def read(self: Observation, atcf_filepath: str = None) -> SimpleNamespace:

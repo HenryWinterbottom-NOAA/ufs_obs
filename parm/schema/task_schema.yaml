@@ -1,0 +1,8 @@
+---
+cimss_adt:
+  module: atcf
+  class: ATCF
+tempdrop:
+  module: obsio.tempdrop_read
+  class: TEMPDROP
+g
