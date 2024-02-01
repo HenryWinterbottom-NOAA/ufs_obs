@@ -36,7 +36,7 @@ installation attributes are provided in the table below.
 | Dependency Package | <div align="left">Installation Instructions</div> | 
 | :-------------: | :-------------: |
 | <div align="left">[`pybufrkit`](https://github.com/ywangd/pybufrkit)</div> | <div align="left">`pip install pybufrkit`</div> |
-| <div align="left">[`ufs_pyutils`](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils)</div> | <div align="left">`git+https://www.github.com/HenryWinterbottom-NOAA/ufs_pyutils.git`</div> |
+| <div align="left">[`metpy`](https://github.com/Unidata/MetPy)</div> | <div align="left">`pip install metpy`</div> |
 
 </div>
 

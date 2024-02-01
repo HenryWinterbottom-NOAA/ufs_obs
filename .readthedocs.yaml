@@ -13,5 +13,5 @@ python:
       extra_requirements:
         - all
     - requirements: docs/source/requirements.txt
-    - requirements: requirements.pip
+    - requirements: requirements.txt
 

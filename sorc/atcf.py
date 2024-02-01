@@ -103,7 +103,7 @@ class ATCF(Observation):
         Parameters
         ----------
 
-        tcvobj: SimpleNamespace
+        tcvobj: ``SimpleNamespace``
 
             A Python SimpleNamespace object containing the attributes
             for the respective ATCF record.
@@ -111,7 +111,7 @@ class ATCF(Observation):
         Return
         ------
 
-        obs_dict: Dict
+        obs_dict: ``Dict``
 
             A Python dictionary containing the ATCF observations.
 
@@ -119,9 +119,9 @@ class ATCF(Observation):
 
         # Build the TC-vitals record.
         schema_path = self.obs_type_obj.schema
-        obs_dict = parser_interface.object_todict(object_in=tcvobj)
+        #obs_dict = parser_interface.object_todict(object_in=tcvobj)
 
-        return (schema_path, obs_dict)
+        return (schema_path, tcvobj)
 
     @privatemethod
     def format_tcv(self: Observation, obs_dict: Dict) -> Dict:
@@ -135,14 +135,14 @@ class ATCF(Observation):
         Parameters
         ----------
 
-        obs_dict: Dict
+        obs_dict: ``Dict``
 
             A Python dictionary containing the ATCF observations.
 
         Returns
         -------
 
-        tcv_dict: Dict
+        tcv_dict: ``Dict``
 
             A Python dictionary containing the ATCF-formatted record.
 
@@ -152,11 +152,14 @@ class ATCF(Observation):
         schema_dict = YAML().read_yaml(yaml_file=self.obs_type_obj.schema)
         tcv_dict = {}
         for obs in obs_dict:
-            strfrmt = parser_interface.dict_key_value(
-                dict_in=schema_dict[obs], key="format", force=True, no_split=True
-            )
-            tcv_dict[obs] = strfrmt % obs_dict[obs]
-
+            try:
+                strfrmt = parser_interface.dict_key_value(
+                    dict_in=schema_dict[obs], key="format", force=True, no_split=True
+                )
+                tcv_dict[obs] = strfrmt % obs_dict[obs]
+            except KeyError:
+                pass
+                
         return tcv_dict
 
     def read(self: Observation, atcf_filepath: str = None) -> SimpleNamespace:
@@ -171,7 +174,7 @@ class ATCF(Observation):
         Keywords
         --------
 
-        atcf_filepath: str, optional
+        atcf_filepath: ``str``, optional
 
             A Python string specifying the path to the ATCF-formatted
             file containing the respective ATCF records.
@@ -179,7 +182,7 @@ class ATCF(Observation):
         Returns
         -------
 
-        tcvobj: SimpleNamespace
+        tcvobj: ``SimpleNamespace``
 
             A Python SimpleNamespace object containing the attributes
             for each ATCF record.
@@ -214,12 +217,12 @@ class ATCF(Observation):
         Parameters
         ----------
 
-        tcvobj: SimpleNamespace
+        tcvobj: ``SimpleNamespace``
 
             A Python SimpleNamespace object containing the attributes
             for each ATCF record.
 
-        atcf_filepath: str
+        atcf_filepath: ``str``
 
             A Python string specifying the path to the ATCF-formatted
             file to contain the respective ATCF records.
