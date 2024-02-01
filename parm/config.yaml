@@ -2,3 +2,6 @@
 atcf:
   schema: !ENV ${OBS_ROOT}/parm/schema/atcf_read.schema.yaml
   tmpl: !ENV ${OBS_ROOT}/parm/schema/atcf_write.tmpl
+tempdrop:
+  schema: !ENV ${OBS_ROOT}/parm/schema/tempdrop_decode_read.schema.yaml
+  tmpl: null
