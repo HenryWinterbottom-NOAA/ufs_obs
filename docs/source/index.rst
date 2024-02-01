@@ -36,8 +36,11 @@ A Fortran compiler is required for the respective Python dependencies. This pack
      - **Description**
      - **Installation Instructions**
    * - ``pybufrkit``
-     - `Pure Python toolkit to work with WMO BUFR messages <https://github.com/ywangd/pybufrkit>`_
+     - `Python toolkit to work with WMO BUFR messages <https://github.com/ywangd/pybufrkit>`_
      - ``pip install pybufrkit``
+   * - ``metpy``
+     - `Python tools for reading, visualizing and performing weather data calculations <https://github.com/Unidata/MetPy>`_
+     - ``pip install metpy``
 
 The above packages can be installed as follows:
 
