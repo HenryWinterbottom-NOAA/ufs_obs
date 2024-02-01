@@ -36,7 +36,7 @@ installation attributes are provided in the table below.
 | Dependency Package | <div align="left">Installation Instructions</div> | 
 | :-------------: | :-------------: |
 | <div align="left">[`pybufrkit`](https://github.com/ywangd/pybufrkit)</div> | <div align="left">`pip install pybufrkit`</div> |
-| <div align="left">[`ufs_pyutils`](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils)</div> | <div align="left">`git+https://www.github.com/HenryWinterbottom-NOAA/ufs_pyutils.git`</div> |
+| <div align="left">[`metpy`](https://github.com/Unidata/MetPy)</div> | <div align="left">`pip install metpy`</div> |
 
 </div>
 
@@ -48,10 +48,10 @@ In order to install the respective Python packages upon which
 ~~~shell
 user@host:$ cd /path/to/ufs_obs
 user@host:$ /path/to/pip install update
-user@host:$ /path/to/pip install -r /path/to/ufs_obs/requirements.pip
+user@host:$ /path/to/pip install -r /path/to/ufs_obs/requirements.txt
 ~~~
 
-For additional information using `pip` and `requirements.pip` type files, see [here](https://pip.pypa.io/en/stable/reference/requirements-file-format/).
+For additional information using `pip` and `requirements.txt` type files, see [here](https://pip.pypa.io/en/stable/reference/requirements-file-format/).
 
 # Docker Containers
 
