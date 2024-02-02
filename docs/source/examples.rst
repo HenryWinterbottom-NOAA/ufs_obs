@@ -226,7 +226,7 @@ are excluded. Further, any forecast type `FIX` methods are excluded.
    from atcf import ATCF
    from obsio.cimss_adt_read import read_cimssadt_history
 
-   # Define the CIMSS ADT archive file path.
+   # Define the CIMSS ADT history file path.
    cimss_adt_file = "/path/to/18E-list.txt"
 
    # Build the Python object containing the relevant attributes.
@@ -260,3 +260,64 @@ The resulting ATCF formatted records are then as follows.
    CIMSS ADT0017 NONAME    20231025 0540 165N 997E -99 -99 0939 -999 -999 63 -99 -999 -999 -999 -999 -999 -999 -999  -999 -999 -999 -999 X  
    CIMSS ADT0018 NONAME    20231025 0610 167N 998E -99 -99 0939 -999 -999 63 -99 -999 -999 -999 -999 -999 -999 -999  -999 -999 -999 -999 X  
    CIMSS ADT0019 NONAME    20231025 0640 167N 999E -99 -99 0940 -999 -999 63 -99 -999 -999 -999 -999 -999 -999 -999  -999 -999 -999 -999 X    
+
+Converting TEMPDROP-formatted Observations to HSA
+-------------------------------------------------
+
+.. code-block:: python
+
+   # Load the Python packages.
+   from obsio.tempdrop_read import TEMPDROP
+
+   # Define the TEMPDROP message file path.
+   tempdrop_filepath = "/path/to/202310241822.txt"
+
+   # Decode the TEMPDROP message; do not update for drift or time.
+   TEMPDROP().run(filepath=tempdrop_filepath)
+
+   # Decode the TEMPDROP message and update for drift (time will be updated also).
+   TEMPDROP(correct_drift=True).run(filepath=tempdrop_filepath)
+
+The default HSA-formatted record, without drift or time corrections, will be as follows.
+
+.. code-block:: shell
+
+    1 231024. 1806  13.800  97.800 1070.0  -99.0  -99.0  1010.0 -99.0  -99.0 MANL  
+    1 231024. 1806  13.800  97.800 1007.0   27.8   84.5   -99.0 -99.0  -99.0 SIGL  
+    1 231024. 1806  13.800  97.800 1007.0  -99.0  -99.0   -99.0  -3.9   10.6 SIGL  
+    1 231024. 1806  13.800  97.800 1000.0   27.4   86.6    89.0  -3.9   10.6 MANL  
+    1 231024. 1806  13.800  97.800  987.0  -99.0  -99.0   -99.0  -1.9   10.6 SIGL  
+    1 231024. 1806  13.800  97.800  978.0  -99.0  -99.0   -99.0  -1.1   12.8 SIGL  
+    1 231024. 1806  13.800  97.800  925.0   23.2   80.9   777.0   4.6    9.8 MANL  
+    1 231024. 1806  13.800  97.800  904.0  -99.0  -99.0   -99.0   4.1    8.9 SIGL  
+    1 231024. 1806  13.800  97.800  850.0   19.2   82.7  1513.0   3.2   11.9 MANL  
+    1 231024. 1806  13.800  97.800  850.0   19.2   82.7   -99.0 -99.0  -99.0 SIGL  
+    1 231024. 1806  13.800  97.800  850.0  -99.0  -99.0   -99.0   3.2   11.9 SIGL  
+    1 231024. 1806  13.800  97.800  757.0  -99.0  -99.0   -99.0   5.4   11.7 SIGL  
+    1 231024. 1806  13.800  97.800  709.0  -99.0  -99.0   -99.0   1.1   12.8 SIGL  
+    1 231024. 1806  13.800  97.800  702.0   11.0   76.9   -99.0 -99.0  -99.0 SIGL  
+    1 231024. 1806  13.800  97.800  700.0  -99.0  -99.0  3161.0 -99.0  -99.0 MANL
+
+The HSA-formatted record with drift (and time) corrections will be as follows.
+
+.. code-block:: shell
+
+   1 231024.0 1806  13.812  97.760  1007.0    27.8    84.5     24.8   -3.9   10.6 SIGL
+   1 231024.0 1806  13.812  97.760  1007.0    27.8    84.5     24.8   -3.9   10.6 SIGL
+   1 231024.0 1805  13.815  97.760  1000.0    27.4    86.6     89.0   -3.9   10.6 MANL
+   1 231024.0 1805  13.818  97.760   987.0    26.7    85.6    208.3   -1.9   10.6 SIGL
+   1 231024.0 1804  13.819  97.760   978.0    26.2    84.9    290.8   -1.1   12.8 SIGL
+   1 231024.0 1804  13.820  97.760   925.0    23.2    80.9    777.0    4.6    9.8 MANL
+   1 231024.0 1803  13.816  97.760   904.0    22.1    81.4    983.1    4.1    8.9 SIGL
+   1 231024.0 1803  13.813  97.760   850.0    19.2    82.7   1513.0    3.2   11.9 MANL
+   1 231024.0 1803  13.811  97.760   850.0    19.2    82.7   1513.0    3.2   11.9 SIGL
+   1 231024.0 1802  13.808  97.760   850.0    19.2    82.7   1513.0    3.2   11.9 SIGL
+   1 231024.0 1802  13.806  97.760   757.0    14.0    79.1   2534.8    5.4   11.7 SIGL
+   1 231024.0 1802  13.801  97.760   709.0    11.4    77.2   3062.1    1.1   12.8 SIGL
+   1 231024.0 1802  13.800  97.760   702.0    11.0    76.9   3139.0    0.5   13.0 SIGL
+   1 231024.0 1802  13.800  97.760   700.0    10.9    76.8   3161.0    0.3   13.0 MANL
+
+Note that when correcting for drift and/or time, the missing values
+(denoted by -99.0) in the TEMPDROP decoded HSA message are estimated
+via linear interpolation. Finally, when correcting for drift, the
+surface values are excluded.

@@ -68,4 +68,5 @@ A Docker container environment, supporting and within which the ``ufs_obs`` appl
 
    atcf.rst
    cimss_adt.rst
+   tempdrop.rst
    examples.rst
