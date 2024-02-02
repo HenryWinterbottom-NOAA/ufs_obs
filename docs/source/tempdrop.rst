@@ -3,7 +3,7 @@ TEMPDROP Message Observations
 
 Decodes `TEMPDROP-formatted
 <https://www.aoml.noaa.gov/hrd/format/tempdrop_format.html>`_
-observation messages and writes Hurricane Research Division (HRD)
+observation messages and generates Hurricane Research Division (HRD)
 Spline Analysis (`HSA
 <https://www.aoml.noaa.gov/hrd/format/hsa_format.html>`_) formatted
 output.
