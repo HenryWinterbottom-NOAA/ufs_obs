@@ -173,15 +173,12 @@ def __scalegeo__(tcvrec_obj: SimpleNamespace) -> SimpleNamespace:
     (lat_scale, lon_scale) = [1.0 / 10.0 for idx in range(2)]
     if "S" in tcvrec_obj.lat:
         lat_scale = -1.0 / 10.0
-    tcvrec_obj.lat = units.Quantity(
-        lat_scale * int(tcvrec_obj.lat[:-1]), "degrees")
+    tcvrec_obj.lat = units.Quantity(lat_scale * int(tcvrec_obj.lat[:-1]), "degrees")
     if "E" in tcvrec_obj.lon:
         lon_scale = -1.0 / 10.0
-    tcvrec_obj.lon = units.Quantity(
-        lon_scale * int(tcvrec_obj.lon[:-1]), "degrees")
+    tcvrec_obj.lon = units.Quantity(lon_scale * int(tcvrec_obj.lon[:-1]), "degrees")
     tcvrec_obj.stormdir = units.Quantity(tcvrec_obj.stormdir, "degrees")
-    tcvrec_obj.stormspd = units.Quantity(
-        tcvrec_obj.stormspd * kts2mps, units="mps")
+    tcvrec_obj.stormspd = units.Quantity(tcvrec_obj.stormspd * kts2mps, units="mps")
 
     return tcvrec_obj
 
