@@ -15,9 +15,7 @@
 
 FROM ghcr.io/henrywinterbottom-noaa/ubuntu20.04.ufs_pyutils:latest
 ENV UFS_OBS_GIT_URL="https://www.github.com/HenryWinterbottom-NOAA/ufs_obs.git"
-ENV UFS_OBS_GIT_BRANCH="feature/ufs_obs_issue_13"
-
-#"develop"
+ENV UFS_OBS_GIT_BRANCH="develop"
 ENV OBS_ROOT="/opt/ufs_obs"
 
 ARG DEBIAN_FRONTEND=noninteractive
