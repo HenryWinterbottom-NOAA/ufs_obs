@@ -49,6 +49,7 @@ The above packages can be installed as follows:
    user@host:$ cd /path/to/ufs_obs
    user@host:$ /path/to/pip install --upgrade pip
    user@host:$ /path/to/pip install -r requirements.txt
+   user@host:$ ./build.sh
 
 For additional information and options for building Python packages, see `here <https://docs.python.org/3.5/distutils/setupscript.html)>`_.
    
